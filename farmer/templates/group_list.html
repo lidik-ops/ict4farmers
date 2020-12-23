@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+   <!-- Container-fluid starts-->
+   <div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Group List
+                      {% if request.user.is_superuser or perms.farmer.add_group %}
+                        <small><a class="add-new" href="{% url 'farmer:create_farmer_group' %}">Add new</a></small>
+                        {% endif %}
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Groups</li>
+                    <li class="breadcrumb-item active">Group List</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- bootstrap table begin here -->
+<div id="toolbar">
+  <button id="remove" class="btn btn-danger" disabled>
+    <i class="fa fa-trash"></i> Delete
+  </button>
+</div>
+<table
+id="table"
+   data-toggle="table"
+  data-show-toggle="true"
+  data-search="true"
+  data-show-search-button="true"
+  data-show-refresh="true"
+  data-show-fullscreen="true"
+  data-show-columns="true"
+  data-show-columns-toggle-all="true"
+  data-show-export="true"
+  data-click-to-select="true"
+  data-minimum-count-columns="2"
+  data-show-pagination-switch="true"
+  data-pagination="true"
+  data-id-field="id"
+  data-total-field="count"
+  data-data-field="results"
+  data-toolbar="#toolbar"
+  data-side-pagination="server"
+data-server-sort="false"
+data-page-list="[10, 25, 50, 100, all]"
+data-export-types="[‘png’, ‘csv’,‘doc’, ‘excel’, ‘xlsx’, ‘pdf’]"
+  data-url="/farmer/api/groups/"
+  data-response-handler="responseHandler">
+  <thead>
+    <tr>
+      <th data-field="state" data-checkbox="true"></th>
+      <th data-field="name" data-sortable="true">Name</th>
+      <th data-field="address" data-sortable="true">Address</th>
+      <th data-field="contact_person" data-sortable="true">Contact Person</th>
+      <th data-field="contact_person_phone" data-sortable="true">Phone</th>
+      <th data-field="contact_person_email" data-sortable="true">Email</th>
+      <th data-field="description" data-visible="false" data-sortable="true">Description</th>
+      <th data-field="logo" data-visible="false"  data-formatter="imageFormatter" data-sortable="true">Logo</th>
+      {% if request.user.is_superuser or perms.farmer.change_group %}
+      <th data-formatter="operateFormatter"  class="text-center">Action</th>
+      {% endif %}
+                
+    </tr>
+  </thead>
+</table>
+ <!--bootstrap table ends here-->
+ {% endblock %}
+ {% block javascript %}
+<script>
+  var $table = $('#table');
+  var $remove = $('#remove')
+  var selections = []
+
+  function getIdSelections() {
+    return $.map($table.bootstrapTable('getSelections'), function (row) {
+      return row.id
+    })
+  }
+  function responseHandler(res) {
+    $.each(res.rows, function (i, row) {
+      row.state = $.inArray(row.id, selections) !== -1
+    })
+    return res
+  }
+  //displays an image
+    function imageFormatter(value, row) {
+      var url =row.logo;
+    return '<img class="img-thumbnail" src="'+url+'">'
+  }
+
+  // function operateFormatter(value, row, index) {
+  //   console.log(row.id);
+  //   var url ="/farmer/group/" + row.id +"/edit";
+  //   return [
+  //   {% if request.user.is_superuser or perms.farmer.change_group %}
+  //     '<a class="Edit " href="'+url+'" title="Edit">',
+  //     '<i class="fa fa-pencil"></i>',
+  //     '</a>  ',
+  //       {% endif %}
+  //   ].join('')
+  // }
+
+  function operateFormatter(value, row, index) {
+    var url ="/farmer/group/"+row.id+"/edit"
+    return [
+    {% if request.user.is_superuser or perms.farmer.change_group %}
+      '<a class="Edit " href="'+url+'" title="Update">',
+      '<i class="fa fa-edit"></i>',
+      '</a>  ',
+        {% endif %}
+    ].join('')
+  }
+
+  ///used cookies to get crsf token
+  function getCookie(c_name)
+    {
+      if (document.cookie.length > 0)
+        {
+          c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1)
+         {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+         }
+     }
+      return "";
+   }
+   function initTable() {
+
+$table.on('check.bs.table uncheck.bs.table ' +
+  'check-all.bs.table uncheck-all.bs.table',
+function () {
+  $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
+
+
+  // save your data, here just save the current page
+  selections = getIdSelections()
+  // push or splice the selections if you want to save all data selections
+})
+$table.on('all.bs.table', function (e, name, args) {
+  console.log(name, args)
+})
+///multiple delete
+$remove.click(function () {
+  var ids = getIdSelections()
+  $remove.prop('disabled', true)
+
+  swal({
+title: "Are you sure?",
+text: "Once deleted, you will not be able to recover these records!",
+icon: "warning",
+buttons: true,
+dangerMode: true,
+})
+.then((willDelete) => {
+if (willDelete) {
+for(id=0; id<ids.length; id++){
+    console.log(ids[id]);
+
+$.ajax({
+    url: "/farmer/api/groups/"+ids[id],
+    data: {},
+    headers:{"X-CSRFToken": getCookie("csrftoken")},
+    type: 'DELETE',
+    contentType: 'application/json',
+    success: function(result) {
+      console.log('deleted successfule');
+    },
+   });
+swal("Your record/s have been deleted successfully!", {
+  icon: "success",
+}).then(() =>{
+        window.location.reload()});
+;}
+} else {
+swal("You have cancelled the deletion of records!");
+}
+});
+
+})
+
+
+
+
+
+
+}
+
+$(function() {
+initTable()
+
+$('#locale').change(initTable)
+})
+
+
+
+
+</script>
+ 
+
+{% endblock %}

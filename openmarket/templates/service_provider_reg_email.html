@@ -1,0 +1,13 @@
+{% extends 'root_email.html' %}
+{% block heading %}
+Dear {{ user.first_name }} {{user.last_name}},
+{% endblock heading %}
+{% block content_body %}
+Your account as a service provider has been created successfully
+<br>
+
+If you think, it's not you, then just ignore this email.
+<br>
+Kind Regards,<br>
+ICT4Farmers Team
+{% endblock content_body %}

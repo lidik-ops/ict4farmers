@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% load crispy_forms_tags %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/multi_form.css' %}">
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-header-left">
+                                <h3>Create Seller Profile
+
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ol class="breadcrumb float-right">
+                                <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                                <li class="breadcrumb-item">Sellers </li>
+                                <li class="breadcrumb-item active">Add Profile </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card tab2-card">
+                            <div class="card-header">
+                                <h5> Add Profile</h5>
+                            </div>
+                            <form id="form" class="card-body" action="" method="post"
+                            data-districts-url="{% url 'common:ajax_load_districts' %}"
+                            data-counties-url="{% url 'common:ajax_load_counties' %}"
+                            data-sub_counties-url="{% url 'common:ajax_load_sub_counties' %}"
+                            data-parishes-url="{% url 'common:ajax_load_parishes' %}"
+                            data-villages-url="{% url 'common:ajax_load_villages' %}"
+                            >
+                             {% csrf_token %}
+
+
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab" id="personalinfo" role="tabpanel" aria-labelledby="personalinfo-tab">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                  <h4>Personal Information</h4>
+                                            </div>
+
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.date_of_birth|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.gender|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.business_number|as_crispy_field }}
+                                            </div>
+
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.seller_type|as_crispy_field }}
+                                            </div>
+
+
+
+                                            <div class="col-xl-12 col-md-12">
+                                                {{ form.major_products|as_crispy_field }}
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="tab" id="address" role="tabpanel" aria-labelledby="address-tabs">
+                                      <div class="row">
+                                        <div class="col-md-12">
+                                            <h4>Address</h4>
+                                      </div>
+                                                <div class="col-xl-6 col-md-6">
+                                                    {{ form.region|as_crispy_field }}
+                                                </div>
+                                                <div class="col-xl-6 col-md-6">
+                                                    {{ form.district|as_crispy_field }}
+                                                </div>
+                                                <div class="col-xl-6 col-md-6">
+                                                    {{ form.county|as_crispy_field }}
+                                                </div>
+                                                <div class="col-xl-6 col-md-6">
+                                                    {{ form.sub_county|as_crispy_field }}
+                                                </div>
+                                                <div class="col-xl-6 col-md-6">
+                                                    {{ form.parish|as_crispy_field }}
+                                                </div>
+                                                <div class="col-xl-6 col-md-6">
+                                                    {{ form.village|as_crispy_field }}
+                                                </div>
+                                                <div class="col-xl-12 col-md-12">
+                                                    {{ form.business_location|as_crispy_field }}
+                                                </div>
+
+                                            </div>
+                                         </div>
+                                        </div>
+
+                                <div style="overflow:auto;">
+                                    <div style="float:right;">
+                                        <button type="button" class="btn previous">Previous</button>
+                                        <button type="button" class="next btn btn-primary">Next</button>
+
+                                        <button type="button" class="btn btn-success submit">Submit</button>
+                                    </div>
+                                </div>
+                                <!-- Circles which indicates the steps of the form: -->
+                                <div style="text-align:center;margin-top:40px;">
+                                    <span class="step">1</span>
+                                    <span class="step">2</span>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+            {% endblock %}
+
+{% block javascript %}
+ <!-- included them for stepwise forms  -->
+ <script src="{% static 'js/validate.min.js' %}"></script>
+
+ <script type="text/javascript" src="{% static 'js/multi_form.js' %}"></script>
+    <script type="text/javascript">
+     $(document).ready(function () {
+
+    //load districts
+    $("#id_region").change(function () {
+      var url = $("#form").attr("data-districts-url");  // get the url of the `load_cities` view
+      var regionId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+        data: {
+          'region': regionId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_district").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+    //load counties
+    $("#id_district").change(function () {
+      var url = $("#form").attr("data-counties-url");  // get the url of the `load_cities` view
+      var districtId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request
+        data: {
+          'district': districtId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_county").html(data);  // replace the contents of the city input with the data that came from the server
+
+        }
+      });
+    });
+    // load sub counties
+    $("#id_county").change(function () {
+      var url = $("#form").attr("data-sub_counties-url");  // get the url of the `load_cities` view
+      var countyId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request
+        data: {
+          'county': countyId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_sub_county").html(data);  // replace the contents of the city input with the data that came from the server
+
+        }
+      });
+    });
+
+    // load parishes ajax
+    $("#id_sub_county").change(function () {
+      var url = $("#form").attr("data-parishes-url");  // get the url of the `load_cities` view
+      var sub_countyId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request
+        data: {
+          'sub_county': sub_countyId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_parish").html(data);  // replace the contents of the city input with the data that came from the server
+
+        }
+      });
+    });
+
+      // load villages ajax
+      $("#id_parish").change(function () {
+      var url = $("#form").attr("data-villages-url");  // get the url of the `load_cities` view
+      var parishId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request
+        data: {
+          'parish': parishId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_village").html(data);  // replace the contents of the city input with the data that came from the server
+
+        }
+      });
+    });
+
+
+    var val = {
+                // Specify validation rules
+                rules: {
+                    business_number_1: {
+                        required: true,
+                        minlength:9,
+                        digits: true
+                    },
+                    phone_2_1: {
+                      required: true,
+                        minlength:9,
+                        digits: true
+
+                    },
+                    nin: {
+                        required: true,
+                        minlength:15,
+                    }
+                },
+                // Specify validation error messages
+                messages: {
+                business_number_1:
+                        "Please enter a valid phone number",
+                   phone_2_1: {
+                        required: "Please enter a valid phone numbe"
+                    },
+                    nin: {
+                        required: "Please a valid NIN"
+                    }
+                }
+            }
+    // calling multistep
+    $("#form").multiStepForm(
+                {
+                    // defaultStep:0,
+                    beforeSubmit: function (form, submit) {
+                        console.log("called before submiting the form");
+                        console.log(form);
+                        console.log(submit);
+                    },
+                    validations: val,
+                }
+            ).navigateTo(0);
+
+
+
+
+    {% for message in messages %}
+        $.notify("{{message}}", "{{ message.tags }}", { position:"center" });
+    {% endfor %}
+            });
+
+
+    </script>
+{% endblock %}

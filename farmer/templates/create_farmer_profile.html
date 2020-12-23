@@ -1,0 +1,220 @@
+
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/multi_form.css' %}">
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-header-left">
+                                <h3>{% if farmerprofile %} Edit {% else %}Create {% endif %} Farmer Profile
+                                   
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ol class="breadcrumb float-right">
+                                <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                                <li class="breadcrumb-item">Farmers </li>
+                                <li class="breadcrumb-item active">Add Profile </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card tab2-card ">
+                            <div class="card-header">
+                                <h5> {% if farmerprofile %} Update {% else %} Add {% endif %}Farmer Profile</h5>
+                            </div>
+                            <form method="POST"  id="form"  data-districts-url="{% url 'common:ajax_load_districts' %}" novalidate enctype="multipart/form-data" class="card-body"
+                            data-counties-url="{% url 'common:ajax_load_counties' %}"
+                            data-sub_counties-url="{% url 'common:ajax_load_sub_counties' %}"
+                            data-parishes-url="{% url 'common:ajax_load_parishes' %}"
+                            data-villages-url="{% url 'common:ajax_load_villages' %}">
+                                {% csrf_token %}
+ 
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab" id="personalinfo" role="tabpanel" aria-labelledby="personalinfo-tab">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Personal Information</h4>
+                                          </div>
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.nin|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.date_of_birth|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.level_of_education|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.marital_status|as_crispy_field }}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {{ form.occupation|as_crispy_field }}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {{ form.number_of_dependants|as_crispy_field }}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {{ form.credit_access|as_crispy_field }}
+                                            </div>
+                                            <div class="col-md-6" id="credit_source">
+                                                {{ form.source_of_credit|as_crispy_field }}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {{ form.experience|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                    </div>
+                
+                                    <div class="tab" id="farming" role="tabpanel" aria-labelledby="farming-tabs">
+                                       
+                                          
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Farming Information</h4>
+                                          </div>
+                                          
+                                            <div class="col-md-6">
+                                                {{ form.sector|as_crispy_field }} 
+                                            </div>
+                                            <div class="col-md-6">
+                                                {{ form.group|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-4 col-md-4">
+                                                {{ form.size_of_land|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-4 col-md-4">
+                                                {{ form.type_of_land|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-4 col-md-4">
+                                                {{ form.production_scale|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-12 col-md-12">
+                                                {{ form.general_remarks|as_crispy_field }}
+                                            </div>
+                                        
+                                        </div>
+                                  
+                                </div>
+                                </div>
+                                <div style="overflow:auto;">
+                                    <div style="float:right;">
+                                      <button type="button" class="btn previous">Previous</button>
+                                        <button type="button" class="next btn btn-primary">Next</button>
+                                       
+                                        <button type="button" class="btn btn-primary submit">Submit</button>
+                                    </div>
+                                </div>
+                                <!-- Circles which indicates the steps of the form: -->
+                                <div style="text-align:center;margin-top:40px;">
+                                    <span class="step">1</span>
+                                    <span class="step">2</span>
+                                    
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+            {% endblock %}
+           
+
+<!--select 2-->
+<!-- latest jquery-->
+{% block javascript %}
+ <!-- included them for stepwise forms  -->
+
+<script>
+
+    $(document).ready(function () {
+      // add select 2 to dropdown fields
+      $('#id_sector').select2( );
+      $('#id_group').select2();
+      $('#credit_source').hide();  
+     
+      $('#div_id_credit_access').change(function () {
+
+        if ($('#id_credit_access').val() == 'True') {
+            $('#credit_source').show();
+        }
+        else if ($('#id_credit_access').val() == 'False') {
+            $('#credit_source').hide();
+        }
+
+        })
+
+
+            var val = {
+                // Specify validation rules
+                rules: {
+                  phone_1_1: {
+                        required: true,
+                        minlength:9,
+                        digits: true
+                    },
+                    phone_2_1: {
+                      required: true,
+                        minlength:9,
+                        digits: true
+
+                    },
+                    nin: {
+                        required: true,
+                        
+                    }
+                },
+                // Specify validation error messages
+                messages: {
+                  phone_1_1:
+                        "Please enter a valid phone number",
+                   phone_2_1: {
+                        required: "Please enter a valid phone numbe"
+                    },
+                    nin: {
+                        required: "Please a valid NIN"
+                    }
+                }
+            }
+    // calling multistep 
+    $("#form").multiStepForm(
+                {
+                    // defaultStep:0,
+                    beforeSubmit: function (form, submit) {
+                        console.log("called before submiting the form");
+                        console.log(form);
+                        console.log(submit);
+                    },
+                    validations: val,
+                }
+            ).navigateTo(0);
+
+
+
+    });
+  
+  
+  </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+

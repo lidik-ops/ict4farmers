@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+   <!-- Container-fluid starts-->
+   <div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Services List
+                      <small><a class="add-new" href="{% url 'openmarket:service_registration' %}">Add new</a></small>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Services</li>
+                    <li class="breadcrumb-item active">services List</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Container-fluid Ends-->
+
+
+
+<!-- bootstrap table begin here -->
+<div id="toolbar">
+  <button id="remove" class="btn btn-danger" title="Delete" disabled>
+    <i class="fa fa-trash"></i> 
+  </button>
+ 
+</div>
+<table
+  id="table"
+  data-toggle="table"
+  data-show-refresh="true"
+  data-show-toggle="true"
+  data-search="true"
+  data-show-fullscreen="true"
+  data-show-columns="true"
+  data-show-columns-toggle-all="true"
+  data-show-export="true"
+  data-click-to-select="true"
+  data-minimum-count-columns="2"
+  data-show-pagination-switch="true"
+  data-pagination="true"
+  data-id-field="id"
+  data-toolbar="#toolbar"
+  data-page-list="[10, 25, 50, 100, all]"
+  data-url="/openmarket/api/serviceregistration/?format=json">
+  <thead>
+    <tr>
+      <th data-field="state" data-checkbox="true"></th>
+      <th data-field="full_name" data-sortable="true">Service Provider</th>
+      <th data-field="service_name" data-visible="false"  data-sortable="true">Service Name</th>
+      <th data-field="location" data-visible="true"  data-sortable="true">Service Location</th>
+      <th data-field="category" data-visible="true"  data-sortable="true">Category</th>
+      <th data-field="name_of_storage_center" data-visible="false"  data-sortable="true">Name of Storage Centre</th>
+      <th data-field="location_of_storage_center" data-visible="false"  data-sortable="true">Location of storage centre</th>
+      <th data-field="vehicle_type" data-visible="false"  data-sortable="true">Vehicle Type</th>
+      <th data-field="vehicle_capacity" data-visible="false"  data-sortable="true">Vehicle Capacity</th>
+      <th data-field="service_type" data-sortable="true">Service Type</th>
+      <th data-field="size" data-sortable="false">Size</th>
+      <th data-field="availability_date" data-sortable="true" data-visible="true">Availability Date</th>
+      <th data-field="picture" data-visible="false"  data-formatter="imageFormatter" data-sortable="true">Picture</th>
+      <th data-formatter="operateFormatter" data-events="operateEvents" class="text-center">Action</th>      
+    </tr>
+  </thead>
+</table>
+ <!--bootstrap table ends here-->
+ {% endblock %}
+<!-- latest jquery-->
+{% block javascript %}
+<script>
+ var $table = $('#table')
+  var $remove = $('#remove')
+  
+  var selections = []
+
+  function getIdSelections() {
+    return $.map($table.bootstrapTable('getSelections'), function (row) {
+      return row.id
+    })
+  }
+
+  function responseHandler(res) {
+    $.each(res.rows, function (i, row) {
+      row.state = $.inArray(row.id, selections) !== -1
+    })
+    return res
+  }
+
+  function imageFormatter(value, row) {
+    var url =row.picture;
+  return '<img class="img-thumbnail" src="'+url+'">'
+}
+  function operateFormatter(value, row, index) {
+    var url ="/openmarket/"+row.id+"/editservice"
+    var view_url ="/openmarket/"+row.id+"/viewservice"
+    return [
+   
+      '<a class="Edit " href="'+url+'" title="Edit">',
+      '<i class="fa fa-edit"></i>',
+      '</a>  ',
+
+      '<a class="Edit " href="'+view_url+'" title="View">',
+      '<i class="fa fa-eye"></i>',
+      '</a>  ',
+
+    ].join('')
+  }
+
+  window.operateEvents = {
+    'click .Detail': function (e, value, row, index) {
+      //try
+      $('#my_modal').on('show.bs.modal', function(e) {
+
+       //get data-id attribute of the clicked element
+var bookId = $(e.relatedTarget).data('book-id');
+
+//populate the textbox
+$(e.currentTarget).find('input[name="bookId"]').val(bookId);
+});
+    
+      
+      $('#detailsModel').modal('show');
+    
+      console.log(row.user);
+      
+    },
+    'click .Edit': function (e, value, row, index) {
+      window.location.href ="/openmarket/"+row.id+"/edit";
+
+      
+    },
+  }
+
+  ///used cookies to get crsf token
+  function getCookie(c_name)
+    {
+      if (document.cookie.length > 0)
+        {
+          c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1)
+         {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+         }
+     }
+      return "";
+   }
+
+  function initTable() {
+
+    $table.on('check.bs.table uncheck.bs.table ' +
+      'check-all.bs.table uncheck-all.bs.table',
+    function () {
+      $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
+      $approve.prop('disabled', !$table.bootstrapTable('getSelections').length)
+      $decline.prop('disabled', !$table.bootstrapTable('getSelections').length)
+
+      // save your data, here just save the current page
+      selections = getIdSelections()
+      // push or splice the selections if you want to save all data selections
+    })
+    $table.on('all.bs.table', function (e, name, args) {
+      console.log(name, args)
+    })
+    ///multiple delete
+    $remove.click(function () {
+      var ids = getIdSelections()
+      $remove.prop('disabled', true)
+    
+      swal({
+  title: "Are you sure?",
+  text: "Once deleted, you will not be able to recover these records!",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    for(id=0; id<ids.length; id++){
+        console.log(ids[id]);
+
+        $.ajax({
+        url: "/openmarket/api/serviceregistration/"+ids[id],
+
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'DELETE',
+        contentType: 'application/json',
+        success: function(result) {
+          console.log('deleted successfule');
+        },
+       });
+    swal("Your record/s have been deleted successfully!", {
+      icon: "success",
+    }).then(() =>{
+        window.location.reload()});
+    }
+  } else {
+    swal("You have cancelled the deletion of records!");
+  }
+});
+      
+    })
+
+    ///approve farmer profiles
+    $approve.click(function () {
+      var ids = getIdSelections()
+      $approve.prop('disabled', true)
+    
+      swal({
+  title: "Approve Farmer Applications?",
+  text: "Are you sure you want to approve these applications!",
+  icon: "success",
+  buttons: true,
+  dangerMode: false,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    for(id=0; id<ids.length; id++){
+        console.log(ids[id]);
+
+    $.ajax({
+        url: "/openmarket/"+ids[id]+'/approve/',
+
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'PATCH',
+        //contentType: 'application/json',
+        success: function(result) {
+          console.log('approved successfully');
+        },
+       });
+    swal("You have approve farmer/s successfully!", {
+      icon: "success",
+    });}
+  } else {
+    swal("You have cancelled farmer approvals!");
+  }
+});
+      
+    })
+
+
+    ///decline farmer request
+    $decline.click(function () {
+      var ids = getIdSelections()
+      $decline.prop('disabled', true)
+    
+      swal({
+  title: "Decline Application",
+  text: "Are you sure You want to decline these Applications?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: false,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    for(id=0; id<ids.length; id++){
+        console.log(ids[id]);
+
+    $.ajax({
+        url: "/openmarket/"+ids[id]+'/approve/',
+
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'PUT',
+        //contentType: 'application/json',
+        success: function(result) {
+          console.log('approved successfully');
+        },
+       });
+    swal("You have approved farmer/s successfully!", {
+      icon: "success",
+    });}
+  } else {
+    swal("You have cancelled farmer approvals!");
+  }
+});
+      
+    })
+
+  }
+
+  $(function() {
+    initTable()
+
+    $('#locale').change(initTable)
+  })
+
+ 
+ </script>
+  
+ 
+
+{% endblock %}

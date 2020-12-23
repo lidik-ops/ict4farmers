@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Resource Detail
+                        
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Farm</li>
+                    <li class="breadcrumb-item active">Farm Detail</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="row product-page-main card-body">
+          
+                    <div class="col-md-6">
+          
+                      <div class="col-auto">
+                        <div class="resource_avatar-wrapper" data-tippy-placement="bottom" title="Profile image">
+                          {% if Resourceobject.image %}  
+                          <img alt="" class="profile-pic" src="{{Resourceobject.image.url}}"/>
+                          {% endif %} 
+                        </div>
+                    </div>
+                     
+                  </div>
+                  <div class="col-md-6">
+                      <div class="product-page-details product-right mb-0">
+                          <h2>{{Resourceobject.user.profile}}</h2>
+                          <hr>
+                          <h3 class="product-title">Resource Details</h3>
+                          <b>Resource Name</b>: {{Resourceobject.resource_name}} <br>
+                          <b>Owner</b>: {{Resourceobject.owner}} <br>
+                          <b>Phone Number1</b>: {{Resourceobject.Phone_number1}} <br>
+                          <b>Phone Number2</b>: {{Resourceobject.Phone_number2}} <br>
+                          <b>Resource Category</b>: {{Resourceobject.resource_category}}<br>
+                          <b>Water Available</b>: {{Resourceobject.terms_and_conditions}}<br>
+                          <b>Resource Status</b>: {{Resourceobject.resource_status}}<br>
+                          <b>Available From</b>: {{Resourceobject.available_from}}<br>
+                          <b>Available To</b>: {{Resourceobject.available_to}}<br>
+                          <b>Price</b>: {{Resourceobject.price}}<br>
+                          <hr>
+                        </div>
+                        <a class="btn btn-primary" href="{% url "resourcesharing:resourcebooking" Resourceobject.pk %}">BOOK</a>
+                       </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+{% endblock %}

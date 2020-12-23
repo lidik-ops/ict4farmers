@@ -1,0 +1,436 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+
+ 
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="page-header-left">
+                                <h3>Profile
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ol class="breadcrumb float-right">
+                                <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                                <li class="breadcrumb-item">Settings</li>
+                                <li class="breadcrumb-item active">Profile</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="profile-details text-center">
+                                    {% if user.profile.profile_pic %}
+                                    <img src="{{user.profile.profile_pic.url}}" alt="" class="img-fluid img-100 rounded-circle blur-up lazyloaded">
+                                    {% else %}
+                                    <img src="{% static 'images/user.png' %}" alt="" class="img-fluid img-100 rounded-circle blur-up lazyloaded">
+                                    {% endif %}
+                                    <h5 class="f-w-600 mb-0">{{user.first_name}} {{user.last_name}}</h5>
+                                    <span>{{user.email}}</span>
+                                </div>
+                                <hr>
+                                <div class="project-status text-center">
+                                    <h5 class="f-w-600">User Groups</h5>
+                                    {% for group in user.groups.all %}
+                            
+                                      
+                                            <h6>{{group.name}}</h6>
+                                 
+                                    {% endfor %}
+                                 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-8">
+                        <div class="card tab2-card">
+                            <div class="card-body">
+                                <ul class="nav nav-tabs nav-material" id="top-tab" role="tablist">
+                                    <li class="nav-item"><a class="nav-link active" id="top-profile-tab" data-toggle="tab" href="#top-profile" role="tab" aria-controls="top-profile" aria-selected="true"><i class="fas fa-user" class="mr-2"></i> Profile</a>
+                                    </li>
+                                    {% if user.farmer %}
+                                    <li class="nav-item"><a class="nav-link" id="contact-top-tab" data-toggle="tab" href="#top-contact" role="tab" aria-controls="top-contact" aria-selected="false"><i class="fas fa-person-booth mr-2"></i> Farmer</a>
+
+                                    </li>
+                                    {% endif %}
+                                    {% if user.serviceprovider %}
+                                    <li class="nav-item"><a class="nav-link" id="provider-top-tab" data-toggle="tab" href="#top-provider" role="tab" aria-controls="top-provider" aria-selected="false"><i class="fas fa-people-carry mr-2"></i> Service Provider</a>
+
+                                    </li>
+                                    {% endif %}
+                                    {% if user.seller %}
+                                    <li class="nav-item"><a class="nav-link" id="seller-top-tab" data-toggle="tab" href="#top-seller" role="tab" aria-controls="top-seller" aria-selected="false"><i class="fas fa-user mr-2"></i> Seller</a>
+
+                                    </li>
+                                    {% endif %}
+                                    {% if user.agent %}
+                                    <li class="nav-item"><a class="nav-link" id="agent-top-tab" data-toggle="tab" href="#top-agent" role="tab" aria-controls="top-agent" aria-selected="false"><i class="fas fa-users-cog mr-2"></i>Agent</a>
+
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                                <div class="tab-content" id="top-tabContent">
+                                    <div class="tab-pane fade show active" id="top-profile" role="tabpanel" aria-labelledby="top-profile-tab">
+                                        <h5 class="f-w-600">Profile</h5>
+                                        <div class="table-responsive profile-table">
+                                            <table class="table table-responsive">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Username:</td>
+                                                        <td>{{user.username}}</td>
+                                                    </tr>
+                                                <tr>
+                                                    <td>First Name:</td>
+                                                    <td>{{user.first_name}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Last Name:</td>
+                                                    <td>{{user.last_name}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Email:</td>
+                                                    <td>{{user.email}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Gender:</td>
+                                                    <td>{{user.profile.get_gender_display}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Mobile Number:</td>
+                                                    <td style="white-space: nowrap;">
+                                                        {{user.profile.phone_number}} 
+                                                        {% if user.profile.phone_2 %} /{{user.profile.phone_2}}
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Region:</td>
+                                                    <td>{{user.profile.region}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>District:</td>
+                                                    <td>{{user.profile.district}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>County:</td>
+                                                    <td>{{user.profile.county}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sub-County:</td>
+                                                    <td>{{user.profile.sub_county}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Parish:</td>
+                                                    <td>{{user.profile.parish}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Village:</td>
+                                                    <td>{{user.profile.village}}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="top-contact" role="tabpanel" aria-labelledby="contact-top-tab">
+                                        
+                                            <h5 class="f-w-600">Farmer Profile</h5>
+                                            <div class="table-responsive profile-table">
+                                                <table class="table table-responsive">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>NIN:</td>
+                                                            <td>{{user.farmer.nin}}</td>
+                                                        </tr>
+                                                    <tr>
+                                                        <td>DOB:</td>
+                                                        <td>{{user.farmer.date_of_birth}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Sector:</td>
+                                                        <td>
+                                                            {% for sector in user.farmer.sector.all %}
+                                                            {{sector.name}},
+
+                                                            {% endfor %}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Farmer Group:</td>
+                                                        <td style="white-space: nowrap;">{{user.farmer.group}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Education Level:</td>
+                                                        <td>{{user.farmer.get_level_of_education_display}}</td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <td>Farming Experience:</td>
+                                                        <td>{{user.farmer.experience}} years</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Marital Status:</td>
+                                                        <td>{{user.farmer.get_marital_status_display}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Size of Land:</td>
+                                                        <td style="white-space: nowrap;">
+                                                            {{user.farmer.size_of_land}} acres
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Land Type:</td>
+                                                        <td>
+                                                            {{user.farmer.get_type_of_land_display}}
+                                                        </td>
+                                                    </tr>
+                                                    
+                                                 
+                                                    <tr>
+                                                        <td>Production Scale:</td>
+                                                        <td>{{user.farmer.get_production_scale_display}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Status:</td>
+                                                        <td>{{user.farmer.status}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Number of Dependants:</td>
+                                                        <td>{{user.farmer.number_of_dependants}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Access to Credit:</td>
+                                                        <td>{% if user.farmer.credit_access == True %}
+                                                            Yes
+                                                            {% else %}
+                                                            No
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Source of Credit:</td>
+                                                        <td>{{user.farmer.get_source_of_credit_display}}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>General Remarks:</td>
+                                                        <td>{{user.farmer.general_remarks}}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                     
+                                      
+                                    </div>
+                                    <div class="tab-pane fade" id="top-provider" role="tabpanel" aria-labelledby="provider-top-tab">
+                                        
+                                        <h5 class="f-w-600">Service Provider Profile</h5>
+                                        <div class="table-responsive profile-table">
+                                            <table class="table table-responsive">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>NIN:</td>
+                                                        <td>{{user.serviceprovider.nin}}</td>
+                                                    </tr>
+                                                <tr>
+                                                    <td>Location:</td>
+                                                    <td>{{user.serviceprovider.service_provider_location}}</td>
+                                                </tr>
+                                              
+                                                <tr>
+                                                    <td>Services Offered:</td>
+                                                    <td style="white-space: nowrap;">{{user.serviceprovider.list_of_services_if_more_than_one}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Is the Service Available:</td>
+                                                    
+                                                    
+                                                        <td>{% if user.serviceprovider.is_the_service_available == True %}
+                                                            Yes
+                                                            {% else %}
+                                                            No
+                                                            {% endif %}
+                                                        </td>
+                                                
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td>Service Location:</td>
+                                                    <td>{{user.serviceprovider.service_location}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Service at a Fee:</td>
+                                                    
+                                                    <td>{% if user.serviceprovider.is_the_service_at_a_fee == True %}
+                                                        Yes
+                                                        {% else %}
+                                                        No
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Service Category:</td>
+                                                    <td >
+                                                        {{user.serviceprovider.get_category_display}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Status:</td>
+                                                    <td>
+                                                        {{user.serviceprovider.get_status_display}}
+                                                    </td>
+                                                </tr>
+                                                
+                                             
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                 
+                                  
+                                </div>
+                                <div class="tab-pane fade" id="top-seller" role="tabpanel" aria-labelledby="seller-top-tab">
+                                        
+                                    <h5 class="f-w-600">Seller Profile</h5>
+                                    <div class="table-responsive profile-table">
+                                        <table class="table table-responsive">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Date of Birth:</td>
+                                                    <td>{{user.seller.date_of_birth}}</td>
+                                                </tr>
+                                            <tr>
+                                                <td>Gender:</td>
+                                                <td>{{user.seller.get_gender_display}}</td>
+                                            </tr>
+                                          
+                                            <tr>
+                                                <td>Business Number:</td>
+                                                <td>{{user.seller.business_number}}</td>
+                                            </tr>
+                                      
+                                            
+                                            <tr>
+                                                <td>Seller Type:</td>
+                                                <td>{{user.seller.get_seller_type_display}}</td>
+                                            </tr>
+                                           
+                                            <tr>
+                                                <td>Major Products:</td>
+                                                <td >
+                                                    {{user.seller.major_products}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Status:</td>
+                                                <td>
+                                                    {{user.seller.get_status_display}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Business Location</th>
+                                            </tr>
+                                            <tr>
+                                                <td>Region:</td>
+                                                <td>
+                                                    {{user.seller.region}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>District:</td>
+                                                <td>
+                                                    {{user.seller.district}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>County:</td>
+                                                <td>
+                                                    {{user.seller.county}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Sub-County:</td>
+                                                <td>
+                                                    {{user.seller.sub_county}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Parish:</td>
+                                                <td>
+                                                    {{user.seller.parish}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Village:</td>
+                                                <td>
+                                                    {{user.seller.village}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Business Address:</td>
+                                                <td>
+                                                    {{user.seller.business_location}}
+                                                </td>
+                                            </tr>
+                                            
+                                         
+                                            </tbody>
+                                        </table>
+                                    </div>
+                             
+                              
+                            </div>
+                            <div class="tab-pane fade" id="top-agent" role="tabpanel" aria-labelledby="agent-top-tab">
+                                        
+                                <h5 class="f-w-600">Agent Profile</h5>
+                                <div class="table-responsive profile-table">
+                                    <table class="table table-responsive">
+                                        <tbody>
+                                            <tr>
+                                                <td>Contact:</td>
+                                                <td>{{user.agent.contact}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Specific Role:</td>
+                                                <td>{{user.agent.specific_role}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Area of  Operation</th>
+                                            </tr>
+                                        <tr>
+                                            <td>Region:</td>
+                                            <td>{{user.agent.region}}</td>
+                                        </tr>
+                                      
+                                        <tr>
+                                            <td>District:</td>
+                                            <td>{{user.agent.district}}</td>
+                                        </tr>   
+                                     
+                                        </tbody>
+                                    </table>
+                                </div>
+                         
+                          
+                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+
+{% endblock %}
+           

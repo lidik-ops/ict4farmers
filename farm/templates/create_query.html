@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-header-left">
+                                <h3>Create Query Profile{{message}}
+                                    <small>{{ user.groups.all.0 }} </small>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ol class="breadcrumb float-right">
+                                <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                                <li class="breadcrumb-item">Queries</li>
+                                <li class="breadcrumb-item active">Add Profile </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card tab2-card">
+                            <div class="card-header">
+                                <h5> Add Profile</h5>
+                            </div>
+                            <form id="form" class="card-body" action="" novalidate enctype="multipart/form-data" method="post">
+                             {% csrf_token %}
+
+                                <ul class="nav nav-tabs tab-coupon" id="myTab" role="tablist">
+                                    <li class="nav-item"><a class="nav-link active show" id="queryinfo-tab" data-toggle="tab" href="#queryinfo" role="tab" aria-controls="queryinfo" aria-selected="true" data-original-title="" title="">Query Information</a></li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade active show" id="queryinfo" role="tabpanel" aria-labelledby="queryinfo-tab">
+                                        <div class="row">
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.query_type|as_crispy_field }}
+                                            </div>
+
+                                            <div class="col-xl-6 col-md-6" id="querycatergory">
+                                                {{ form.query_category|as_crispy_field }}
+                                            </div>
+
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.farm|as_crispy_field }}
+                                            </div>
+
+                                            <div class="col-xl-6 col-md-6" id="workername">
+                                                {{ form.name|as_crispy_field }}
+                                            </div>
+                                            
+                                            <div class="col-xl-6 col-md-6" id="date_discovered">
+                                                {{ form.date_discovered|as_crispy_field }}
+                                            </div>
+                                            
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.image|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.reporting_date|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-12 col-md-12">
+                                                {{ form.action_taken|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-12 col-md-12">
+                                                {{ form.description|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                 </div>
+                                                                    
+                                 <div class="float-right">
+                                    <input type="submit" value="Submit" class="btn btn-primary">
+                                 </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+            {% endblock %}
+            
+{% block javascript %}
+<script type="text/javascript">
+
+$(document).ready(function () {
+            $('#querycatergory').hide();  
+            $('#workername').hide(); 
+            $('#date_discovered').hide(); 
+           
+      
+
+
+    $('#id_query_type').change(function () {
+
+    if ($('#id_query_type').val() == 'others') {
+        $('#querycatergory').show();
+    }
+    else if ($('#id_query_type').val() == 'extentional_reports') {
+        $('#querycatergory').hide();
+    }
+
+    })
+
+    $('#id_query_type').change(function () {
+
+    if ($('#id_query_type').val() == 'extentional_reports') {
+        $('#workername').show();
+    }
+    else if ($('#id_query_type').val() == 'others') {
+        $('#workername').hide();
+    }
+
+    })
+
+    $('#id_query_type').change(function () {
+
+    if ($('#id_query_type').val() == 'extentional_reports') {
+        $('#date_discovered').hide();
+    }
+    else if ($('#id_query_type').val() == 'others') {
+        $('#date_discovered').show();
+    }
+
+    })
+    
+});
+</script>
+
+{% endblock %}

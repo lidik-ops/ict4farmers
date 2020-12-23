@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Farmer Detail
+                        
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Farmer</li>
+                    <li class="breadcrumb-item active">Farmer Detail</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="row product-page-main card-body">
+            <div class="col-md-3">
+          
+                <div class="col-auto">
+                    <div class="avatar-wrapper" data-tippy-placement="bottom" title="Profile image">
+                      {% if profilerecord.user.profile.profile_pic %}
+                        <img alt="" class="profile-pic" src="{{profilerecord.user.profile.profile_pic.url}}"/>
+                       {% endif %}
+                    </div>
+                </div>
+               
+            </div>
+            <div class="col-md-9">
+                <div class="product-page-details product-right mb-0">
+                    <h2>{{profilerecord.user.profile}}</h2>
+                    <hr>
+                    <h6 class="product-title">farmer Details</h6>
+                 
+                     <b>Full Name</b>: {{profilerecord.user.profile}} <br>
+                     <b>Email</b>: {{profilerecord.user.email}} <br>
+                     <b>Phone</b>: {{profilerecord.phone_1}}{% if profilerecord.phone_2 %}/{{profilerecord.phone_2}}{% endif %} <br>
+                     <b>NIN</b>: {{profilerecord.nin}}<br>
+                    <b>Level of Education</b>: {{profilerecord.level_of_education}} <br>
+                    <b>Marital Status</b>: {{profilerecord.get_marital_status_display}} <br>
+                    <b>Number of dependants</b>: {{profilerecord.number_of_dependants}} <br>
+                    <b>Have access to credit ?</b>: {% if profilerecord.credit_access is True%} Yes {% else %} No {% endif %} <br>
+                    <h6 class="product-title">Address</h6>
+                    <b>Region</b>: {{profilerecord.user.profile.region}} <br>
+                    <b>District</b>: {{profilerecord.user.profile.district}} <br>
+                    <b>County</b>: {{profilerecord.user.profile.county}} <br>
+                    <b>Sub county</b>: {{profilerecord.user.profile.sub_county}} <br>
+                    <b>Parish</b>: {{profilerecord.user.profile.parish}} <br>
+                    <b>Village</b>: {{profilerecord.user.profile.village}} <br>
+                    <h6 class="product-title">Farming Information</h6>
+                    <b>Sectors</b>:
+                         {% for sector in profilerecord.sector.all %}
+                         {{sector.name}},
+                         {% endfor %}
+                    <br>
+                    <b>Experience in years</b>: {{profilerecord.experience|floatformat}} <br>
+                    <b>Farmers Group</b>: {{profilerecord.group}} <br>
+                    <b>Type of land</b>: {{profilerecord.get_type_of_land_display}} <br>
+                    <b>Size of land </b>: {{profilerecord.size_of_land|floatformat:1}} acres<br>
+                    <b>Production scale </b>: {{profilerecord.get_production_scale_display}}<br>
+                    <b>Status </b>: {{profilerecord.get_status_display}}<br>
+                    <b>General remarks</b><br>
+                    {{profilerecord.general_remarks}}
+                    <hr>
+                    <h6 class="product-title size-text">Farms Owned  </h6>
+                    <table
+  data-toggle="table"
+  data-show-toggle="true"
+  data-search="true"
+  data-show-columns-toggle-all="true"
+  data-show-columns="true">
+  <thead>
+   
+    <tr>
+      <th>Farm Name</th>
+      <th>Location</th>
+      <th >Land Size(acres)</th>
+      <th>Start Date</th>
+      <th>Status</th>
+      <th data-visible="false">Services Available</th>
+      <th data-visible="false"> Water Available</th>
+      <th data-visible="false" >Picture</thdata-visible="false"  data-formatter="imageFormatter">
+    </tr>
+  </thead>
+  <tbody>
+      {% for farm in profilerecord.farms.all %}
+    <tr>
+        <td>{{farm.farm_name}}</td>
+        <td>{{farm.compute_location}}</td>
+        <td>{{farm.land_occupied}} </td>
+        <td>{{farm.start_date}}</td>
+        <td>{{farm.get_status_display}}</td>
+        <td>{% if farm.availability_of_services is True %}
+            Yes {% else %}
+            NO
+            {% endif %}
+        </td>
+        <td>{% if farm.availability_of_water is True %}
+            Yes {% else %}
+            NO
+            {% endif %}
+        </td>
+        <td>
+          {% if farm.image %}
+            <img src="{{farm.image.url}}" class="img-thumbnail">
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+                 
+               
+                    <hr>
+                    {% if request.user.is_superuser or perms.farmer.can_approve_farmers %}
+                    <div class="m-t-15">
+                        <button class="btn btn-primary m-r-10" id="approve_btn" type="button">Approve</button>
+                        <button class="btn btn-decline" id="decline_btn" type="button">Decline</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+{% endblock %}
+{% block javascript %}
+<script>
+ 
+  var $approve = $('#approve_btn')
+  var $decline = $('#decline_btn')
+
+
+
+  ///used cookies to get crsf token
+  function getCookie(c_name)
+    {
+      if (document.cookie.length > 0)
+        {
+          c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1)
+         {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+         }
+     }
+      return "";
+   }
+
+  function initTable() {
+
+    ///approve farmer profiles
+    $approve.click(function () {
+     
+      $approve.prop('disabled', true)
+
+      swal({
+  title: "Approve Farmer Applications?",
+  text: "Are you sure you want to approve these applications!",
+  icon: "success",
+  buttons: true,
+  dangerMode: false,
+})
+.then((willDelete) => {
+  if (willDelete) {
+ 
+    $.ajax({
+        url: "/farmer/"+{{profilerecord.user.id}}+'/approve/',
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'PATCH',
+        //contentType: 'application/json',
+        success: function(result) {
+          console.log('approved successfully');
+        },
+       });
+    swal("You have approve farmer/s successfully!", {
+      icon: "success",
+    });
+  } else {
+    swal("You have cancelled farmer approvals!");
+  }
+});
+
+    })
+
+
+    ///decline farmer request
+    $decline.click(function () {
+
+      $decline.prop('disabled', true)
+
+      swal({
+  title: "Decline Application",
+  text: "Are you sure You want to decline these Applications?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: false,
+})
+.then((willDelete) => {
+  if (willDelete) {
+ 
+    $.ajax({
+        url: "/farmer/"+{{profilerecord.user.id}}+'/approve/',
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'PUT',
+        //contentType: 'application/json',
+        success: function(result) {
+          console.log('approved successfully');
+        },
+       });
+    swal("You have approved farmer/s successfully!", {
+      icon: "success",
+    });
+  } else {
+    swal("You have cancelled farmer approvals!");
+  }
+});
+
+    })
+
+  }
+
+  $(function() {
+    initTable()
+
+  })
+
+
+</script>
+{% endblock %}

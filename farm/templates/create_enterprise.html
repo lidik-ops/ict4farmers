@@ -1,0 +1,157 @@
+
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-header-left">
+                                <h3>Create Enterprise
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ol class="breadcrumb float-right">
+                                <li class="breadcrumb-item"><a href="{% url 'farm:enterprise_list' %}"><i data-feather="home"></i></a></li>
+                                <li class="breadcrumb-item add-new">Farms</li>
+                                <li class="breadcrumb-item active">Add Enterprise </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card tab2-card">
+                            <div class="card-header">
+                                <h5> Add Enterprise</h5>
+                                {% if messages %}
+                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                    {% for message in messages %}
+                                    <strong>{{message}}</strong>
+                                    {% endfor %}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  {% endif %}
+                            </div>
+                            <form method="POST" id="enterprise_form"  novalidate enctype="multipart/form-data" class="card-body">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.sector|as_crispy_field }}
+                                    </div> 
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.source|as_crispy_field }}
+                                    </div> 
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.farm|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.name|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.enterprise_type|as_crispy_field }}
+                                    </div>
+                                     
+                                    <div class="col-xl-6 col-md-6">
+                                        <div class="form-group">
+                                            <label for="land_occupied" class="required">Land occupied{% if form.land_occupied.field.required %}<span class="error"
+                                                style="color:red">* ( Available farm land {{available_land}})</span>{% endif %}</label>
+                                        {{form.land_occupied}}
+                                        <span class="error" style="color:red" ><div id="land_occupied_error"></div>{{ form.land_occupied.errors }}</span>
+                                    </div>
+                                    </div>
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.start_date|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.animal_seed_density|as_crispy_field }}
+                                    </div>
+                               
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.capital_invested|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.return_on_investment|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.from_period|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-6 col-md-4">
+                                        {{ form.to_period|as_crispy_field }}
+                                    </div>
+                             
+                                    <div class="col-xl-12 col-md-12">
+                                        {{ form.description|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-12 col-md-12">
+                                        {{ form.image|as_crispy_field }}
+                                    </div>
+                                  
+                                </div>
+                              
+                                <div class="float-right">
+                                    <input type="submit" value="Submit" class="btn btn-primary">
+
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+            {% endblock %}
+           
+
+<!--select 2-->
+<!-- latest jquery-->
+{% block javascript %}
+<!--select 2-->
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+        $('#id_farm option:not(:selected)').attr('disabled', true);
+        $("land_occupied_error").val("Enter a number less or equal to the available farm land");
+
+        var available_farm_land = {{available_land}};
+       
+ $('#id_land_occupied').on('mouseleave', function(){
+     var number_entered = $('#id_land_occupied').val();
+     if(number_entered>available_farm_land){
+         $("#land_occupied_error").text("Enter a number less or equal to the available farm land");
+     }
+     else if(number_entered <= available_farm_land){
+        $("#land_occupied_error").text("");
+     }
+
+
+ })
+
+
+    });
+  
+  
+  </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+

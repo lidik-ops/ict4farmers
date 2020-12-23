@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Service Detail
+                        
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Service</li>
+                    <li class="breadcrumb-item active">Service Detail</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="row product-page-main card-body">
+            <div class="col-md-6">
+          
+              <div class="col-auto">
+                <div class="service_avatar-wrapper" data-tippy-placement="bottom" title="Profile image">
+                  {% if Serviceobject.image %}  
+                  <img alt="" class="profile-pic" src="{{Serviceobject.image.url}}"/>
+                  {% endif %} 
+                </div>
+            </div>
+               
+            </div>
+            <div class="col-md-6">
+              <form action="http://maps.google.com/maps" method="get" target="_blank">
+                Enter your starting address:
+                <input type="text" name="saddr" />
+                <input type="hidden" name="daddr" value=" {{farm.compute_location}}" />
+                <input style="border-radius: 25px;" type="submit" class="btn-primary" value="get directions" />
+                </form>
+                <div class="product-page-details product-right mb-0">
+                    <!-- <h2>{{farmobject.farmer.profile}}</h2> -->
+                    <hr>
+                    <h3 class="product-title">Owner Details</h3>
+                      <b>Owner</b>: {{Serviceobject.user.profile}} <br>
+                      <b>Email</b>: <a href = "mailto: {{farmobject.farmer.user.email}}" style="color:blue;">{{farmobject.farmer.user.email}} </a><br>
+                      <b>Phone</b>: {{Serviceobject.user.phone_1}}{% if Serviceobject.user.phone_2 %}/{{Serviceobject.user.phone_2}}{% endif %} <br>
+                    <hr>
+                    
+                    <h3 class="product-title">Service Details</h3>
+                      <b>Category</b>: {{Serviceobject.category}} <br>
+                      <b>Service Name</b>: {{Serviceobject.service_name}} <br>
+                      <b>Service Type</b>: {{Serviceobject.service_type}} <br>
+                      <b>Size</b>: {{Serviceobject.size}} <br>
+                      <b>Availability Date</b>: {{Serviceobject.availability_date}} <br>
+                      <b>Availability Time</b>: {{Serviceobject.availability_time}} <br>
+                      <hr>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+{% endblock %}

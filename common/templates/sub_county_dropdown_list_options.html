@@ -1,0 +1,4 @@
+<option value="">--please select--</option>
+{% for sub_county in sub_counties %}
+<option value="{{ sub_county.pk }}">{{ sub_county.name }}</option>
+{% endfor %}

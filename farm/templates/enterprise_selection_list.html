@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+   <!-- Container-fluid starts-->
+   <div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Enterprises Recommended
+                      {% if request.user.is_superuser or perms.farm.add_enterpriseselection %}
+                        <small><a class="add-new" href="{% url 'farm:enterprise_selection' %}">Add new</a></small>
+                        {% endif %}
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Enterprise Selection</li>
+                    <li class="breadcrumb-item active"> Recommendations</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- bootstrap table begin here -->
+<div id="toolbar">
+  {% if request.user.is_superuser or perms.farm.delete_farm %}
+  <button id="remove" class="btn btn-danger" disabled>
+    <i class="fa fa-trash"></i> Delete
+  </button>
+  {% endif %}
+</div>
+<table
+   id="table"
+   data-toggle="table"
+  data-show-toggle="true"
+  data-search="true"
+  data-show-search-button="true"
+  data-show-refresh="true"
+  data-show-fullscreen="true"
+  data-show-columns="true"
+  data-show-columns-toggle-all="true"
+  data-show-export="true"
+  data-click-to-select="true"
+  data-minimum-count-columns="2"
+  data-show-pagination-switch="true"
+  data-pagination="true"
+  data-id-field="id"
+  data-total-field="count"
+  data-data-field="results"
+  data-toolbar="#toolbar"
+  data-side-pagination="server"
+  data-server-sort="false"
+  data-page-list="[10, 25, 50, 100, all]"
+  data-export-types="[‘png’, ‘csv’,‘doc’, ‘excel’, ‘xlsx’, ‘pdf’,'json']"
+  data-url="/farm/api/enterpriseselection/"
+  data-response-handler="responseHandler">
+  <thead>
+    <tr>
+      {% if request.user.is_superuser or perms.farm.delete_enterpriseselection %}
+      <th data-field="state" data-checkbox="true"></th>
+      {% endif %}
+      <th data-field="user" data-sortable="true">Name</th>
+      <th data-field="profession" data-sortable="true">Profession</th>
+      <th data-field="level_of_education" data-sortable="true">level of education</th>
+      <th data-field="region" data-sortable="true">level of education</th>
+      <th data-field="monthly_income" data-sortable="true">monthly Income</th>
+      <th data-field="capital" data-visible="false" data-sortable="true">Capital To Invest</th>
+      <th data-field="scale" data-sortable="true">Interested Production Scale</th>
+      <th data-field="full_time_devotion"  data-visible="false" data-sortable="true">Full Time Farming</th>
+      <th data-field="own_piece_of_land" data-sortable="true">Do you own a piece of land</th>
+      <th data-field="land_size" data-sortable="true">Land Size</th>
+      <th data-field="land_location" data-sortable="true">Land Location</th>      
+      <th data-field="what_is_your_inspiration_for_considering_in_farming" data-sortable="true">Inspiration for considering farming</th>
+      <th data-field="time_allocated_to_farming" data-sortable="true">Time allocated to farming</th>
+      <th data-field="recommendation" data-visible="true" data-sortable="true">Enterprises Recommended</th>
+      <th data-formatter="operateFormatter"  class="text-center">Action</th>
+                
+    </tr>
+  </thead>
+</table>
+ <!--bootstrap table ends here-->
+ {% endblock %}
+ {% block javascript %}
+<script>
+  var $table = $('#table');
+  var $remove = $('#remove')
+  var selections = []
+
+  function getIdSelections() {
+    return $.map($table.bootstrapTable('getSelections'), function (row) {
+      return row.id
+    })
+  }
+  function responseHandler(res) {
+    $.each(res.rows, function (i, row) {
+      row.state = $.inArray(row.id, selections) !== -1
+    })
+    return res
+  }
+  //displays an image
+    function imageFormatter(value, row) {
+      var url =row.image;
+    return '<img class="img-thumbnail" src="'+url+'">'
+  }
+  function operateFormatter(value, row, index) {
+    console.log(row.id);
+    var url ="/farm/"+row.id+"/edit/farm";
+    var create_enterprise_url ="/farm/create/enterprise/"+row.id;
+    return [
+    {% if request.user.is_superuser or perms.farm.change_farm %}
+      '<a class="Edit " href="'+url+'" title="Edit">',
+      '<i class="fa fa-pencil"></i>',
+      '</a>  ',
+        {% endif %}
+        {% if request.user.is_superuser or perms.farm.add_enterprise %}
+      '<a class="Edit " href="'+create_enterprise_url+'" title="Add Enterprise">',
+      '<i class="fa fa-plus"></i>',
+      '</a>  ',
+        {% endif %}
+    ].join('')
+  }
+
+  ///used cookies to get crsf token
+  function getCookie(c_name)
+    {
+      if (document.cookie.length > 0)
+        {
+          c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1)
+         {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+         }
+     }
+      return "";
+   }
+   function initTable() {
+
+$table.on('check.bs.table uncheck.bs.table ' +
+  'check-all.bs.table uncheck-all.bs.table',
+function () {
+  $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
+
+
+  // save your data, here just save the current page
+  selections = getIdSelections()
+  // push or splice the selections if you want to save all data selections
+})
+$table.on('all.bs.table', function (e, name, args) {
+  console.log(name, args)
+})
+///multiple delete
+$remove.click(function () {
+  var ids = getIdSelections()
+  $remove.prop('disabled', true)
+
+  swal({
+title: "Are you sure?",
+text: "Once deleted, you will not be able to recover these records!",
+icon: "warning",
+buttons: true,
+dangerMode: true,
+})
+.then((willDelete) => {
+if (willDelete) {
+for(id=0; id<ids.length; id++){
+    console.log(ids[id]);
+
+$.ajax({
+    url: "/farm/api/enterpriseselection/"+ids[id],
+    data: {},
+    headers:{"X-CSRFToken": getCookie("csrftoken")},
+    type: 'DELETE',
+    contentType: 'application/json',
+    success: function(result) {
+      console.log('deleted successfule');
+    },
+   });
+swal("Your record/s have been deleted successfully!", {
+  icon: "success",
+}).then(() =>{
+        window.location.reload()});
+;}
+} else {
+swal("You have cancelled the deletion of records!");
+}
+});
+
+})
+
+
+
+
+
+
+}
+
+$(function() {
+initTable()
+
+$('#locale').change(initTable)
+})
+
+
+
+
+</script>
+ 
+
+ {% endblock %}

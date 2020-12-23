@@ -1,0 +1,136 @@
+{% load staticfiles %}
+{% load compress %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="ICT4Farmers is system developed by Eight Technologies to manage small scale farmers.">
+        <meta name="author" content="Eight Technologies">
+        <link rel="icon" href="/images/dashboard/favicon.png" type="image/x-icon">
+        <link rel="shortcut icon" href="/images/dashboard/favicon.png" type="image/x-icon">
+        <title>ICT4Farmers</title>
+
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    {% compress css %}
+    <!-- Font Awesome-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/fontawesome.css' %}">
+
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+       <!-- App css-->
+       <link rel="stylesheet" type="text/css" href="{% static 'css/site.css' %}">
+       {% endcompress %}
+
+    <!-- App css-->
+    <style>
+        body, html {
+          height: 100%;
+          margin: 0;
+        }
+
+        .bg {
+          /* The image used */
+          background-image:url("/static/images/login_bg.jpg");
+
+          /* Full height */
+          height: 100%;
+          width: 100%;
+          /* Center and scale the image nicely */
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+        .login{
+            right: 5%;
+            margin-left: 12px;
+            position: absolute;
+            bottom:8%;
+        }
+        .login h2 {
+            color: #145a32;
+        }
+        .text-color{
+            color:#145a32;
+        }
+        </style>
+    </head>
+    <body >
+        <div class="bg">
+            <div class="login">
+                <div class="row">
+                    <div class="col-md-5 offset-md-7">
+                <h2>Login To Your Account</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="text-color">Email/Phone Number</label>
+                                <input type="text" name="username" class="form-control" id="id_username" aria-describedby="emailHelp">
+                                <small  class="form-text text-danger">{{form.username.errors}}</small>
+                              </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                  <label class="text-color" for="password">Password/Pin</label>
+                                  <input type="password"  name="password" class="form-control" id="password-field" >
+                                  <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password mr-2"> </span>
+                                  
+                                </div>
+                                <small  class="form-text text-danger">{{form.password.errors}}</small>
+                             </div>
+                             <div class="">
+                                {% if error %}
+                                <p class="text-danger">{{ message }}</p>
+                                {% endif %}
+                             </div>
+                             <div class="form-terms col-md-12 ">
+                                <div class="custom-control custom-checkbox mr-sm-2">
+                                    <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
+                                    <label class="custom-control-label text-color" for="customControlAutosizing">Remember me</label>
+                                    <a href="{% url 'common:forgot_password' %}" class="btn btn-default forgot-pass text-color">Forgot Password</a>
+                                </div>
+                            </div>
+
+                             <div class="col-md-6  offset-md-2">
+                                <input value="Sign In" class="btn-primary btn-lg btn-block" type="submit">
+
+                              </div>
+                              <div class="form-footer">
+                              <div class="col-md-12 m-2">
+                                  <h5 class="text-color">New User?<span><a class="text-color" href="{% url 'common:signup' %}">Create an account</a></span></h5>
+                              </div>
+                              </div>
+
+
+                    </div>
+                </form>
+            </div>
+            </div>
+
+            </div>
+        </div>
+
+
+        <script src="/lib/jquery.min.js"></script>
+        <script src="/lib/jquery.plugin.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script>
+        // Change the type of input to password or text 
+        $(".toggle-password").click(function () {
+
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+        });
+    </script> 
+    </body>
+    </html>

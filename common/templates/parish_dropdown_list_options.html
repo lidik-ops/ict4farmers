@@ -1,0 +1,4 @@
+<option value="">--please select--</option>
+{% for parish in parishes %}
+<option value="{{ parish.pk }}">{{ parish.name }}</option>
+{% endfor %}

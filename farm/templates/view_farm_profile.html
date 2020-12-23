@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Farmer Detail
+                        
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Farm</li>
+                    <li class="breadcrumb-item active">Farm Detail</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="row product-page-main card-body">
+            <div class="col-md-4">
+          
+              <div class="col-auto">
+                 <div class="farm_avatar-wrapper" data-tippy-placement="bottom" title="Profile image">
+                  {% if farmobject.farmer.user.profile.profile_pic %} 
+                   <img alt="" class="profile-pic" src="{{farmobject.farmer.user.profile.profile_pic.url}}"/>
+                  {% endif %}
+                 </div>
+            </div>
+               
+            </div>
+            <div class="col-md-8">
+              <form action="http://maps.google.com/maps" method="get" target="_blank">
+                Enter your starting address:
+                <input type="text" name="saddr" />
+                <input type="hidden" name="daddr" value=" {{farm.compute_location}}" />
+                <input style="border-radius: 25px;" type="submit" class="btn-primary" value="get directions" />
+                </form>
+                <div class="product-page-details product-right mb-0">
+                    <h2>{{farmobject.farmer.profile}}</h2>
+                    <hr>
+                    <h3 class="product-title">farmer Details</h3>
+                      <b>Farmer</b>: {{farmobject.farmer.user.profile}} <br>
+                      <b>Email</b>: <a href = "mailto: {{farmobject.farmer.user.email}}" style="color:blue;">{{farmobject.farmer.user.email}} </a><br>
+                      <b>Phone</b>: {{farmobject.farmer.user.profile.phone_number}}{% if farmobject.farmer.user.profile.phone_2 %}/{{farmobject.farmer.user.profile.phone_2}}{% endif %} <br>
+                    <hr>
+                    
+                    <h6 class="product-title">Address</h6>
+                      <b>Region</b>: {{farmobject.farmer.user.profile.region}} <br>
+                      <b>District</b>: {{farmobject.farmer.user.profile.district}} <br>
+                      <b>County</b>: {{farmobject.farmer.user.profile.county}} <br>
+                      <b>Sub county</b>: {{farmobject.farmer.user.profile.sub_county}} <br>
+                      <b>Parish</b>: {{farmobject.farmer.user.profile.parish}} <br>
+                      <b>Village</b>: {{farmobject.farmer.user.profile.village}} <br>
+                      <hr>
+
+                    <h6 class="product-title">Farming Information</h6>
+                        <b>Sectors</b>:
+                                {% for sector in farmobject.farmer.sector.all %}
+                                {{sector.name}},
+                                {% endfor %}
+                            <br>
+                        <b>Experience in years</b>: {{farmobject.farmer.experience|floatformat}} <br>
+                        <b>Farmers Group</b>: {{farmobject.farmer.group}} <br>
+                        <b>Type of land</b>: {{farmobject.farmer.get_type_of_land_display}} <br>
+                        <b>Size of land </b>: {{farmobject.farmer.size_of_land|floatformat:1}} acres<br>
+                        <b>Production scale </b>: {{farmobject.farmer.get_production_scale_display}}<br>
+                        <b>Status </b>: {{farmobject.farmer.get_status_display}}<br>
+                       <hr>
+                      </div>
+                    </div>
+                    <hr>
+
+                    <div class="col-md-4">
+          
+                      <div class="col-auto">
+                        <div class="farm_avatar-wrapper" data-tippy-placement="bottom" title="Profile image">
+                          {% if farmobject.image %}  
+                          <img alt="" class="profile-pic" src="{{farmobject.image.url}}"/>
+                          {% endif %} 
+                        </div>
+                    </div>
+                     
+                  </div>
+                  <div class="col-md-8">
+                      <div class="product-page-details product-right mb-0">
+                          <h2>{{profilerecord.user.profile}}</h2>
+                          <hr>
+                          <h3 class="product-title">farm Details</h3>
+                          <b>Farm Name</b>: {{farm.farm_name}} <br>
+                          <b>Location</b>: {{farm.compute_location}} <br>
+                          <b>Land Size(acres)</b>: {{farm.land_occupied}} <br>
+                          <b>Start Date</b>: {{farm.start_date}} <br>
+                          <b>Status</b>: {{farm.get_status_display}} <br>
+                          <b>Services Available</b>: {% if farm.availability_of_services is True %}
+                          Yes {% else %}
+                          NO
+                          {% endif %}<br>
+                          <b>Water Available</b>:{% if farm.availability_of_water is True %}
+                          Yes {% else %}
+                          NO
+                          {% endif %}<br>
+                          <hr>
+                        </div>
+                        <h3 class="product-title size-text">Enterprises Owned  </h3>
+                        <table
+      data-toggle="table"
+      data-show-toggle="true"
+      data-search="true"
+      data-show-columns-toggle-all="true"
+      data-show-columns="true">
+      <thead>
+       
+        <tr>
+          <th>Enterprise Name</th>
+          <th>Farm</th>
+          <th >Enterprise type</th>
+          <th>Animal Seed Density</th>
+          <th>Capital Invested</th>
+          <th data-visible="false">Return On Investment</th>
+          <th data-visible="false">from_period</th>
+          <th data-visible="false">to_period</th>
+          <th data-visible="false">land_occupied</th>
+          <th data-visible="false">start_date</th>
+          <th data-visible="false">close_date</th>
+          <th data-visible="false">description</th>
+          <th data-visible="false"> status</th>
+          <th data-visible="false" >Picture</thdata-visible="false"  data-formatter="imageFormatter">
+        </tr>
+      </thead>
+      <tbody>
+          {% for enterprise in farm.enterprises.all %}
+        <tr>
+            <td>{{enterprise.name}}</td>
+            <td>{{enterprise.farm}}</td>
+            <td>{{enterprise.enterprise_type}} </td>
+            <td>{{enterprise.animal_seed_density}}</td>
+            <td>{{enterprise.capital_invested}}</td>
+            <td>{{enterprise.return_on_investment}}</td>
+            <td>{{enterprise.from_period}}</td>
+            <td>{{enterprise.to_period}}</td>
+            <td>{{enterprise.land_occupied}}</td>
+            <td>{{enterprise.start_date}}</td>
+            <td>{{enterprise.close_date}}</td>
+            <td>{{enterprise.description}}</td>
+            <td>{{enterprise.get_status_display}}</td>
+            <td><img src="{{enterprise.image.url}}" class="img-thumbnail"></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+                      </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+{% endblock %}

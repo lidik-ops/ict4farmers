@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+   <!-- Container-fluid starts-->
+   <div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>BuyerPost List
+                        <small>{{ user.groups.all.0 }} Dashboard</small>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb pull-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">BuyerPost</li>
+                    <li class="breadcrumb-item active">buyerpost List</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Container-fluid Ends-->
+
+
+<!-- bootstrap table begin here -->
+<div id="toolbar">
+  <button id="remove" class="btn btn-danger" disabled>
+    <i class="fa fa-trash"></i> Delete
+  </button>
+</div>
+<table
+  id="table"
+  data-toggle="table"
+  data-show-refresh="true"
+  data-show-toggle="true"
+  data-search="true"
+  data-show-fullscreen="true"
+  data-show-columns="true"
+  data-show-columns-toggle-all="true"
+  data-show-export="true"
+  data-click-to-select="true"
+  data-minimum-count-columns="2"
+  data-show-pagination-switch="true"
+  data-pagination="true"
+  data-id-field="id"
+  data-toolbar="#toolbar"
+  data-page-list="[10, 25, 50, 100, all]"
+  data-url="/api-openmarket/buyerposts/?format=json">
+  <thead>
+    <tr>
+      <th data-field="name" data-sortable="true">name</th>
+      <th data-field="current_location" data-sortable="true">current_location</th>
+      <th data-field="product" data-sortable="true">product</th>
+      <th data-field="total_cost" data-sortable="true">total_cost</th>
+      <th data-field="delivery_options" data-sortable="true">delivery_options</th>
+      <th data-field="payment_options" data-sortable="true">payment_options</th>
+      <th data-field="payment_mode" data-sortable="true">payment_mode</th>
+      <th data-field="any_other_comment" data-sortable="true">Any_other_comment</th>
+      
+    </tr>
+  </thead>
+</table>
+ <!--bootstrap table ends here-->
+
+<!-- latest jquery-->
+
+<script>
+  
+</script>
+ 
+
+{% endblock %}

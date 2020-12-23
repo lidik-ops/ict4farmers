@@ -1,0 +1,379 @@
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="ICT4Farmers is system developed by Eight Technologies to manage small scale farmers.">
+        <meta name="author" content="Eight Technologies">
+        <link rel="icon" href="/images/dashboard/favicon.png" type="image/x-icon">
+        <link rel="shortcut icon" href="/images/dashboard/favicon.png" type="image/x-icon">
+        <title>ICT4Farmers</title>
+
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Font Awesome-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/fontawesome.css' %}">
+    <link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
+
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/multi_form.css' %}">
+       <!-- App css-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/site.css' %}">
+
+
+    <!-- App css-->
+    <style>
+        body, html {
+          height: 100%;
+          margin: 0;
+        }
+
+        .bg {
+          /* The image used */
+          background-image:url("/static/images/signup.png");
+
+          /* Full height */
+          height: 100%;
+          width: 100%;
+          /* Center and scale the image nicely */
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+
+        h2 {
+            color: #145a32;
+        }
+        .text-color{
+            color:#145a32
+        }
+        .error {color: #f00 !important ;}
+.error, .errors {
+  color: red;
+}
+.asteriskField{color: #f00 !important ;}
+.required_color{
+  color: red;
+}
+.card { background-color: rgba(245, 245, 245, 0.61); }
+.card-header, .card-footer { opacity: 10}
+        </style>
+    </head>
+    <body >
+        <div class="bg">
+
+         <!-- bg color -->
+         <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8 offset-md-2 mt-2">
+                    
+                        <h2 class="text-center" >Create A New Account</h2>
+                        <div class="">
+                            {% if error %}
+                            <p class="text-danger">{{ message }}</p>
+                            {% endif %}
+                         </div>
+                        <form method="POST"  id="form"  data-districts-url="{% url 'common:ajax_load_districts' %}" novalidate enctype="multipart/form-data" class="card-body"
+                        data-counties-url="{% url 'common:ajax_load_counties' %}"
+                        data-sub_counties-url="{% url 'common:ajax_load_sub_counties' %}"
+                        data-parishes-url="{% url 'common:ajax_load_parishes' %}"
+                        data-villages-url="{% url 'common:ajax_load_villages' %}">
+                            {% csrf_token %}
+
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab" id="personalinfo" role="tabpanel" aria-labelledby="personalinfo-tab">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h3>Account Information</h4>
+                                      </div>
+                                      <div class="row">
+                                        <div class="col-md-3 col-sm-12 text-color">
+                                            <label>Image</label>
+                                         <div class="col-auto">
+                                            <div class="avatar-wrapper" data-tippy-placement="bottom" title="Upload Image">
+                                                <img alt="" class="profile-pic" src="{% static 'images/user.png'%}"/>
+                                                <div class="upload-button"></div>
+                                                <input accept="image/*" class="file-upload" name="profile_pic" type="file"/>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="row">
+                                               <div class="col-md-6 text-color">
+                                               {{ form.first_name|as_crispy_field }}
+                                            </div>
+                                            <div class="col-md-6 text-color">
+                                               {{ form.last_name|as_crispy_field }}
+                                            </div> 
+                                            <div class="col-md-12 text-color">
+                                               {{ form.username|as_crispy_field }}
+                                            </div>
+                                            </div>
+                                            
+                                         </div>
+                                      
+                                         <div class="col-md-6 text-color">
+                                            {{ form.email|as_crispy_field }}
+                                         </div>
+                                         <div class="col-md-6 text-color">
+                                            {{ form.gender|as_crispy_field }}
+                                         </div>
+                                         <div class="col-md-6 text-color">
+                                            {{ form.phone_number|as_crispy_field }}
+                                         </div>
+                                         <div class="col-md-6 text-color">
+                                            {{ form.phone_2|as_crispy_field }}
+                                         </div>
+                                         <div class="col-md-6 text-color">
+                                            {{ form.password1|as_crispy_field }}
+                                         </div>
+                                         <div class="col-md-6 text-color">
+                                            {{ form.password2|as_crispy_field }}
+                                         </div>
+                                      
+                                    </div>
+                               </div>
+
+                                </div>
+                                <div class="tab" id="address" role="tabpanel" aria-labelledby="address-tabs">
+                                  
+    
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h3>Address</h4>
+                                          </div>
+                                            <div class="text-color col-md-6">
+                                                {{ form.region|as_crispy_field }}
+                                            </div>
+                                            <div class="text-color col-md-6">
+                                                {{ form.district|as_crispy_field }}
+                                            </div>
+                                            <div class="text-color col-md-6">
+                                                {{ form.county|as_crispy_field }}
+                                            </div>
+                                            <div class="text-color col-md-6">
+                                                {{ form.sub_county|as_crispy_field }}
+                                            </div>
+                                            <div class="text-color col-md-6">
+                                                {{ form.parish|as_crispy_field }}
+                                            </div>
+                                            <div class="text-color col-md-6">
+                                                {{ form.village|as_crispy_field }}
+                                            </div>
+                                            <div class="col-md-12 text-color">
+                                                {{ form.home_address|as_crispy_field }}
+                                             </div>
+                                        
+                                        </div>
+                                  
+                                </div>
+                              
+                            </div>
+                            <div style="overflow:auto;">
+                                <div style="float:center;">
+                                  <button type="button" class="btn previous">Previous</button>
+                                    <button type="button" class="next btn btn-primary">Next</button>
+                                
+                                    <button type="button" class="btn btn-primary submit">Submit</button>
+                                </div>
+                                <div style="float: right; margin-right: 10%;">
+                          <h5 class="text-color">Already have an account?<span><a class="text-color" href="{% url 'login' %}">Sign in</a></span></h5>
+                      </div>
+                            </div>
+                            <!-- Circles which indicates the steps of the form: -->
+                            <div style="text-align:center;margin-top:40px;">
+                                <span class="step">1</span>
+                                <span class="step">2</span>
+                               
+                            </div>
+                        </form>
+                    
+                </div>
+            </div>
+        </div>
+    
+        </div>
+        <!-- latest jquery-->
+        <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+        <script src="{% static 'js/script.js' %}"></script>
+        <script src="{% static 'js/select2.min.js' %}"></script>
+        <script src="{% static 'js/validate.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/multi_form.js' %}"></script>
+
+<script>
+
+    $(document).ready(function () {
+      // add select 2 to dropdown fields
+      $('#id_sector').select2( );
+      $('#id_group').select2();
+     
+    //load districts
+    $("#id_region").change(function () {
+      var url = $("#form").attr("data-districts-url");  // get the url of the `load_cities` view
+      var regionId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+        data: {
+          'region': regionId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_district").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+    //load counties
+    $("#id_district").change(function () {
+      var url = $("#form").attr("data-counties-url");  // get the url of the `load_cities` view
+      var districtId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request 
+        data: {
+          'district': districtId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_county").html(data);  // replace the contents of the city input with the data that came from the server
+        
+        }
+      });
+    });
+    // load sub counties
+    $("#id_county").change(function () {
+      var url = $("#form").attr("data-sub_counties-url");  // get the url of the `load_cities` view
+      var countyId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request 
+        data: {
+          'county': countyId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_sub_county").html(data);  // replace the contents of the city input with the data that came from the server
+    
+        }
+      });
+    });
+
+    // load parishes ajax
+    $("#id_sub_county").change(function () {
+      var url = $("#form").attr("data-parishes-url");  // get the url of the `load_cities` view
+      var sub_countyId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request 
+        data: {
+          'sub_county': sub_countyId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_parish").html(data);  // replace the contents of the city input with the data that came from the server
+        
+        }
+      });
+    });
+
+      // load villages ajax
+      $("#id_parish").change(function () {
+      var url = $("#form").attr("data-villages-url");  // get the url of the `load_cities` view
+      var parishId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request 
+        data: {
+          'parish': parishId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_village").html(data);  // replace the contents of the city input with the data that came from the server
+        
+        }
+      });
+    });
+
+    ///form validation 
+    // example of adding a custom  validation method to the form
+    // $.validator.addMethod('year', function (value, element, param) {
+    //             return (value != 0) && (value >= 1900) && (value == parseInt(value, 10));
+    //         }, 'Please enter a valid year not less than 1900!');
+            $.validator.addMethod('username', function (value, element, param) {
+                var nameRegex = /^[a-zA-Z0-9]+$/;
+                return value.match(nameRegex);
+            }, 'Only a-z, A-Z, 0-9 characters are allowed');
+            $.validator.addMethod('password2', function (value, element, param) {
+                var password1 = $("#id_password1").val();
+                return(value==password1);
+            }, 'Passwords do not match');
+            
+
+            var val = {
+                // Specify validation rules
+                rules: {
+                  phone_number_1: {
+                        required: true,
+                        minlength:9,
+                        digits: true
+                    },
+                    phone_2_1: {
+                      required: false,
+                        minlength:9,
+                        digits: true
+
+                    },
+                    nin: {
+                        required: true,
+                        
+                    },
+                    password1:{
+                      required:true,
+                      digits:true,
+                      minlength:4,
+                      maxlength:5
+                    },
+                    password2:{
+                      required:true,
+                      digits:true,
+                      minlength:4,
+                      maxlength:5,
+                      password2:true
+                    }
+                },
+                // Specify validation error messages
+                messages: {
+                  phone_1_1:
+                        "Please enter a valid phone number",
+                   phone_2_1: {
+                        required: "Please enter a valid phone number"
+                    },
+                    nin: {
+                        required: "Please a valid NIN"
+                    }
+                }
+            }
+    // calling multistep 
+    $("#form").multiStepForm(
+                {
+                    // defaultStep:0,
+                    beforeSubmit: function (form, submit) {
+                        console.log("called before submiting the form");
+                        console.log(form);
+                        console.log(submit);
+                    },
+                    validations: val,
+                }
+            ).navigateTo(0);
+
+
+
+    });
+  
+  
+  </script>
+    </body>
+    </html>

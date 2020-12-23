@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+   <!-- Container-fluid starts-->
+   <div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    
+                    <h3>Seller List <br>
+                      {% if  perms.openmarket.add_seller and not request.user.seller %}
+                      <small><a class="add-new" href="{% url 'openmarket:create_seller' %}">
+                        {% if request.user.is_superuser %}
+                        Add new
+                        {% else %}
+                        Register
+                        {% endif %}
+                      </a></small>
+                      {% endif %}
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb pull-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Sellers</li>
+                    <li class="breadcrumb-item active">Seller List</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Container-fluid Ends-->
+
+
+
+<!-- bootstrap table begin here -->
+<div id="toolbar">
+  {% if request.user.is_superuser or perms.openmarket.delete_seller %}
+  <button id="remove" class="btn btn-danger" title="Delete" disabled>
+    <i class="fa fa-trash"></i> 
+  </button>
+  {% endif %}
+  
+  {% if request.user.is_superuser or perms.openmarket.can_approve_sellers %}
+  <button id="decline" class="btn btn-decline" title="Decline" disabled>
+    <i class="fa fa-times"></i>
+  </button>
+  <button id="approve" class="btn btn-primary" title="Approve" disabled>
+    <i class="fa fa-check"></i>
+  </button>
+  {% endif %}
+</div>
+<table
+  id="table"
+  data-toggle="table"
+  data-show-refresh="true"
+  data-show-toggle="true"
+  data-search="true"
+  data-show-fullscreen="true"
+  data-show-columns="true"
+  data-show-columns-toggle-all="true"
+  data-show-export="true"
+  data-click-to-select="true"
+  data-minimum-count-columns="2"
+  data-show-pagination-switch="true"
+  data-pagination="true"
+  data-id-field="user"
+  data-toolbar="#toolbar"
+  data-export-types="[‘png’, ‘csv’,‘doc’, ‘excel’, ‘xlsx’, ‘pdf’]"
+  data-page-list="[10, 25, 50, 100, all]"
+  data-url="/openmarket/api/sellers/"
+  data-response-handler="responseHandler">
+  <thead>
+    <tr>
+      <th data-field="state" data-checkbox="true"></th>
+      <th data-field="full_name" data-sortable="true">User</th>
+      <th data-field="business_number" data-sortable="true">Business Number</th>
+      <th data-field="business_location" data-sortable="true">Business Address</th>
+      <th data-field="seller_type" data-sortable="true">Seller Type</th>
+      <th data-field="major_products" data-sortable="true">Major Products</th>
+      <th data-field="region" data-visible="false" data-sortable="true">Region Business is Located</th>
+      <th data-field="district" data-visible="false" data-sortable="true">District Business is Located</th>
+      <th data-field="county" data-visible="false" data-sortable="true">County Business is Located</th>
+      <th data-field="sub_county" data-visible="false" data-sortable="true">Sub county Business is Located</th>
+      <th data-field="parish" data-visible="false" data-sortable="true">Parish Business is Located</th>
+      <th data-field="village" data-visible="false" data-sortable="true">Village Business is Located</th>
+      <th data-field="gender" data-visible="false" data-sortable="true">Gender</th>
+      <th data-field="date_of_birth" data-visible="false" data-sortable="true">Date of Birth</th>
+      
+  
+      <th data-field="status" data-sortable="true">Status</th>
+      <th data-formatter="operateFormatter"  class="text-center">Action</th>     
+    </tr>
+  </thead>
+</table>
+ <!--bootstrap table ends here-->
+ {% endblock %}
+<!-- latest jquery-->
+{% block javascript %}
+<script>
+  var $table = $('#table')
+  var $remove = $('#remove')
+  var $approve = $('#approve')
+  var $decline = $('#decline')
+  var selections = []
+
+  function getIdSelections() {
+    return $.map($table.bootstrapTable('getSelections'), function (row) {
+      return row.user
+    })
+  }
+
+  function responseHandler(res) {
+    $.each(res.rows, function (i, row) {
+      row.state = $.inArray(row.user, selections) !== -1
+    })
+    return res
+  }
+
+
+
+  function operateFormatter(value, row, index) {
+    var url ="/openmarket/"+row.user+"/edit"
+    return [
+
+      '<a class="Edit " href="'+url+'" title="Edit">',
+      '<i class="fas fa-edit"></i>',
+      '</a>  ',
+
+    ].join('')
+  }
+
+  ///used cookies to get crsf token
+  function getCookie(c_name)
+    {
+      if (document.cookie.length > 0)
+        {
+          c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1)
+         {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+         }
+     }
+      return "";
+   }
+
+  function initTable() {
+
+    $table.on('check.bs.table uncheck.bs.table ' +
+      'check-all.bs.table uncheck-all.bs.table',
+    function () {
+      $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
+      $approve.prop('disabled', !$table.bootstrapTable('getSelections').length)
+      $decline.prop('disabled', !$table.bootstrapTable('getSelections').length)
+
+      // save your data, here just save the current page
+      selections = getIdSelections()
+      // push or splice the selections if you want to save all data selections
+    })
+    $table.on('all.bs.table', function (e, name, args) {
+      console.log(name, args)
+    })
+    ///multiple delete
+    $remove.click(function () {
+      var ids = getIdSelections()
+      $remove.prop('disabled', true)
+    
+      swal({
+  title: "Are you sure?",
+  text: "Once deleted, you will not be able to recover these records!",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    for(id=0; id<ids.length; id++){
+        console.log(ids[id]);
+
+    $.ajax({
+        url: "/openmarket/api/sellers/"+ids[id],
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'DELETE',
+        contentType: 'application/json',
+        success: function(result) {
+          console.log('deleted successful');
+        },
+       });
+    swal("Your record/s have been deleted successfully!", {
+      icon: "success",
+    }).then(() =>{
+            window.location.reload()})
+    ;}
+  } else {
+    swal("You have cancelled the deletion of records!");
+  }
+});
+      
+    })
+
+    ///approve seller profiles
+    $approve.click(function () {
+      var ids = getIdSelections()
+      $approve.prop('disabled', true)
+    
+      swal({
+  title: "Approve seller Applications?",
+  text: "Are you sure you want to approve these applications!",
+  icon: "success",
+  buttons: true,
+  dangerMode: false,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    for(id=0; id<ids.length; id++){
+        console.log(ids[id]);
+
+    $.ajax({
+        url: "/openmarket/"+ids[id]+'/approve/seller',
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'PATCH',
+        //contentType: 'application/json',
+        success: function(result) {
+          console.log('approved successfully');
+        },
+       });
+    swal("You have approve seller/s successfully!", {
+      icon: "success",
+    });}
+  } else {
+    swal("You have cancelled seller approvals!");
+  }
+});
+      
+    })
+
+
+    ///decline farmer request
+    $decline.click(function () {
+      var ids = getIdSelections()
+      $decline.prop('disabled', true)
+    
+      swal({
+  title: "Decline Application",
+  text: "Are you sure You want to decline these Applications?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: false,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    for(id=0; id<ids.length; id++){
+        console.log(ids[id]);
+
+    $.ajax({
+        url: "/openmarket/"+ids[id]+'/approve/',
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'PUT',
+        //contentType: 'application/json',
+        success: function(result) {
+          console.log('approved successfully');
+        },
+       });
+    swal("You have approved seller/s successfully!", {
+      icon: "success",
+    });}
+  } else {
+    swal("You have cancelled seller approvals!");
+  }
+});
+      
+    })
+
+  }
+
+  $(function() {
+    initTable()
+
+    $('#locale').change(initTable)
+  })
+  
+</script>
+ 
+
+{% endblock %}

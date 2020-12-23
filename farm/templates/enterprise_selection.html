@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <div class="page-header-left">
+                    <h3>{% if farm %}Edit {% else %} Enterprise {% endif %} Selection
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'farm:select_enterpise' %}"><i
+                                data-feather="home"></i></a>
+                    </li>
+                    <li class="breadcrumb-item add-new">Enterprise Selection</li>
+                    <li class="breadcrumb-item active"></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <h5>{% if farm %}Update {% else %} Please fill in the form below in order to be guided{% endif %}
+                        about enterprise selection</h5>
+                    {% if messages %}
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        {% for message in messages %}
+                        <strong>{{message}}</strong>
+                        {% endfor %}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                <form method="POST" id="group_form" novalidate enctype="multipart/form-data" class="card-body">
+                    {% csrf_token %}
+                    <div class="row">
+                        <legend>Personal Information</legend>
+                        <div class="col-xl-6 col-md-6">
+                            {{ form.profession|as_crispy_field }}
+                        </div>
+                        <div class="col-xl-6 col-md-6">
+                            {{ form.level_of_education|as_crispy_field }}
+                        </div>
+                        
+                        <div class="col-xl-6 col-md-6">
+                            {{ form.region|as_crispy_field }}
+                        </div>
+                        
+                        <div class="col-xl-6 col-md-6">
+                            {{ form.monthly_income|as_crispy_field }}
+                        </div>
+                        <div class="col-xl-6 col-md-6">
+                            {{ form.capital|as_crispy_field }}
+                        </div>
+                        <div class="col-xl-6">
+                            {{ form.scale|as_crispy_field }}
+                        </div>
+                        <div class="col-xl-12 col-md-6">
+                            {{ form.full_time_devotion|as_crispy_field }}
+                        </div>
+
+                        <div class="col-xl-12 col-md-6">
+                            {{ form.what_is_your_inspiration_for_considering_in_farming|as_crispy_field }}
+                        </div>
+
+
+                        <legend>Land Information</legend>
+
+                        <div class="col-xl-12 col-md-6">
+                            {{ form.own_piece_of_land|as_crispy_field }}
+                        </div>
+                        <div id="land" class="row col-xl-12">
+                            <div class="col-xl-6 col-md-6">
+                                {{ form.land_size|as_crispy_field }}
+                            </div>
+                           
+                            <div class="col-xl-6 col-md-6">
+                                {{ form.land_location|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div id="rented_land"  class="row col-xl-12">
+                            <div class="col-xl-12 col-md-6">
+                                {{ form.rented_land|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="col-xl-12 col-md-6">
+                            {{ form.involved_in_anyother_farming_activity|as_crispy_field }}
+                        </div>
+
+
+                        <!-- <input name="farmer" value="{{user.id}}" type="hidden"> -->
+
+                    </div>
+
+                    <div class="float-right">
+                        <input type="submit" value="Submit" class="btn btn-primary">
+
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+{% endblock %}
+
+
+<!--select 2-->
+<!-- latest jquery-->
+{% block javascript %}
+<!--select 2-->
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#land').hide();
+        //$('#sector').hide();
+        $('#rented_land').hide();
+
+    });
+
+    $('#id_own_piece_of_land').change(function () {
+
+        if ($('#id_own_piece_of_land').val() == 'True') {
+            // alert('It works');
+
+            $('#land').show();
+            $('#rented_land').hide();
+
+        }
+        else if  ($('#id_own_piece_of_land').val() == 'False'){
+
+            $('#land').hide();
+            $('#rented_land').show();
+            // Simulate an HTTP redirect:
+            swal({
+                text: "Since you do not have a piece of land, We recommend that you check our services Map to find service providers who have land available for rent in your area of interest",
+            });
+            
+        }
+        else {
+            $('#rented_land').hide(); 
+        }
+    });
+
+    
+
+
+
+</script>
+{% endblock %}

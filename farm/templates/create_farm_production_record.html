@@ -1,0 +1,147 @@
+
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-header-left">
+                                <h3>Create Production
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ol class="breadcrumb float-right">
+                                <li class="breadcrumb-item"><a href="{% url 'farm:productionrecords' %}"><i data-feather="home"></i></a></li>
+                                <li class="breadcrumb-item add-new">Farms</li>
+                                <li class="breadcrumb-item active">Add Production  Record</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card tab2-card">
+                            <div class="card-header">
+                                <h5> Add Production Record</h5>
+                                {% if messages %}
+                                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                    {% for message in messages %}
+                                    <strong>{{message}}</strong>
+                                    {% endfor %}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  {% endif %}
+                            </div>
+                            <form method="POST" id="enterprise_form"  novalidate enctype="multipart/form-data" class="card-body">
+                                {% csrf_token %}
+                                <div class="row">
+
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.enterprise|as_crispy_field }}
+                                    </div> 
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.record_name|as_crispy_field }}
+                                    </div> 
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.production_activity|as_crispy_field }}
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.quantity|as_crispy_field }}
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6" id="paymentdate">
+                                        {{ form.measurements|as_crispy_field }}
+                                    </div>
+
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.record_date|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-6 col-md-6">
+                                        {{ form.record_time|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-12 col-md-12">
+                                        {{ form.record_taker|as_crispy_field }}
+                                    </div>
+                                
+                                    <div class="col-xl-12 col-md-12">
+                                        {{ form.general_remarks|as_crispy_field }}
+                                    </div>
+                                     
+                                    
+                                </div>
+                              
+                                <div class="float-right">
+                                    <input type="submit" value="Submit" class="btn btn-primary">
+
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+            {% endblock %}
+           
+
+<!--select 2-->
+<!-- latest jquery-->
+{% block javascript %}
+<!--select 2-->
+<script type="text/javascript">
+
+ $(document).ready(function () {
+     $('#id_enterprise option:not(:selected)').attr('disabled', true);
+     $('#paymentdate').hide();  
+    
+      
+
+
+    $('#id_payment_mode').change(function () {
+
+    if ($('#id_payment_mode').val() == 'installments') {
+        $('#paymentdate').show();
+    }
+    else if ($('#id_payment_mode').val() == 'full_payment') {
+        $('#paymentdate').hide();
+    }
+
+    })
+    
+
+    $('#id_payment_mode').change(function () {
+
+    if ($('#id_payment_mode').val() == 'debt') {
+        $('#paymentdate').show();
+    }
+    else if ($('#id_payment_mode').val() == 'full_payment') {
+        $('#paymentdate').hide();
+    }
+    })
+});
+  
+  
+  </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+

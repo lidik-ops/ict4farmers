@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load rest_framework %}
+{% block content %}
+<html>
+
+<body>
+
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    </head>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'farm:sector_list'   %}">Sectors</a></li>
+            <li class="breadcrumb-item active">View</li>
+        </ol>
+    </nav>
+    <!-- CASE VIEW STARTS -->
+    <div class="main_container" id="maincontainer">
+        <div class="overview_form_block row marl justify-content-center">
+            <div class="col-md-10" id="opacity_block">
+                <div class="card">
+                    <div class="card-header" id="datashow">
+                        <div class="card-title text-center">
+                            <h5>
+                                <span class="float-left title">Overview</span>
+                                <span class="" style="margin-top: 0px">
+
+              </span>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row marl">
+                            <div class="col-md-10">
+                                <h4>Sector details</h4>
+                                <dl>
+                    
+                                    <dt>Sector Name</dt>
+                                    <dd>{{ sectorrecord.name }}</dd>
+                    
+                                    <dt>Sector Size:</dt>
+                                    <dd>{{ sectorrecord.size }}</dd>  
+                                </dl>
+                               
+
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+     <br clear="all">
+    </div>
+
+
+
+   Welcome to the details page
+</body>
+
+</html>
+
+{% endblock %}

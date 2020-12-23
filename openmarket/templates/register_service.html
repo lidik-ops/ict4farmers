@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col">
+                <div class="page-header-left">
+                    <h3>Please Register your Services to continue
+                       
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Service  </li>
+                    <li class="breadcrumb-item active">Add a Service </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card tab2-card">
+                <div class="card-header">
+                    <h5> Add Service</h5>
+                </div>
+                <form method="POST" novalidate enctype="multipart/form-data" class="card-body">
+                    {% csrf_token %}
+                    <ul class="nav nav-tabs tab-coupon" id="myTab" role="tablist">
+                        <li class="nav-item"><a class="nav-link active show" id="personalinfo-tab" data-toggle="tab"
+                                href="#personalinfo" role="tab" aria-controls="personalinfo" aria-selected="true"
+                                data-original-title="" title="">Service Information</a></li>
+
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade active show" id="personalinfo" role="tabpanel"
+                            aria-labelledby="personalinfo-tab">
+                            <div class="row">
+
+
+                                <div class="col-xl-6 col-md-6">
+                                    {{ form.service_name|as_crispy_field }}
+                                </div>
+
+                                <div class="col-xl-6 col-md-6" id="category-div">
+                                    {{ form.category|as_crispy_field }}
+                                </div>
+                                <div id="storage-div" class="col-md-12">
+
+
+                                    <div class="col-xl-12 col-md-6">
+                                        {{ form.name_of_storage_center|as_crispy_field }}
+                                    </div>
+
+
+
+                                    <div class="col-md-12" id="id_available_services_div">
+                                        {{ form.available_services|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="row col-xl-12" id="transport">
+                                    <div class="col-xl-12">
+                                        {{ form.driver_name|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-12">
+                                        {{ form.driver_contact|as_crispy_field }}
+                                    </div>
+
+                                    <div class="col-xl-12">
+                                        {{ form.vehicle_type|as_crispy_field }}
+                                    </div>
+                                    <div class="col-xl-12">
+                                        {{ form.vehicle_capacity|as_crispy_field }}
+                                    </div>
+
+                                </div>
+                                <div id="enterprise" class="col-md-12">
+                                    <div class="col-xl-12 ">
+                                        {{ form.enterprise|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div id="others" class="col-md-12">
+                                    <div class="col-xl-12 ">
+                                        {{ form.others|as_crispy_field }}
+                                    </div>
+                                </div>
+
+                                <!-- <div class="col-xl-6 col-md-6">
+                                    {{ form.certification_status|as_crispy_field }}
+                                </div> -->
+                                <legend>Current Location of the service</legend>
+                                <div class="col-md-6 ">
+                                    {{ form.lon|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6 ">
+                                    {{ form.lat|as_crispy_field }}
+                                </div>
+
+
+
+
+                                <!--Value adittion div-->
+                                <div id="value-addition">
+
+                                </div>
+                                <div id="value-addition-id" class="col-md-12">
+
+                                </div>
+
+                                <div id="size">
+                                    <div class="col-xl-12">
+                                        {{ form.size|as_crispy_field }}
+                                    </div>
+
+                                </div>
+                                <div class="col-xl-6 col-md-6">
+                                    {{ form.availability_date|as_crispy_field }}
+                                </div>
+                                <div class="col-xl-6 col-md-6">
+                                    {{ form.picture|as_crispy_field }}
+                                </div>
+                                <div class="col-xl-6 col-md-6">
+                                    {{ form.terms_and_conditions|as_crispy_field }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="float:right;">
+                        <input type="submit" value="Submit" class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+{% endblock %}
+
+
+<!--select 2-->
+<!-- latest jquery-->
+{% block javascript %}
+<!--select 2-->
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //$("#id_group").select2();
+        //$("#id_call").attr('readonly', true);
+        //$("#Father_parent_death").hide();
+        //$("#Mother_parent_death").hide();
+      
+        $('#id_available_services').hide();
+        $('#id_location_of_storage_center').hide();
+        $('#id_name_of_storage_center').hide();
+        $('#storage-div').hide();
+        $('#value-addition-id').hide();
+        $('#transport').hide();
+        $('#enterprise').hide();
+        $('#size').hide();
+        $('#others').hide();
+        
+       // $('#size').hide();
+        
+
+            // hide type of roofing for others specification and show when others is clicked
+            
+       
+    });
+   // alert($('#id_category').val());
+        // alert('it works');
+        $('#id_category').change(function () {
+
+            if ($('#id_category').val() == 'storage') {
+                $('#transport').hide();
+                $('#others').hide();
+                $('#storage-div').show();
+                $("#id_available_services").show();
+
+                $("#id_name_of_storage_center").show();
+                $("#id_location_of_storage_center").show();
+            }
+            else if ($('#id_category').val() == 'value addition') {
+                $('#value-addition-id').hide();
+                $('#enterprise').show();
+                $('#storage-div').hide();
+                $('#size').hide();
+                $('#transport').hide();
+                $('#others').hide();
+            }
+            else if ($('#id_category').val()=='Medical Services'){
+                $('#size').hide();
+                $('#id_size').hide();
+                $('#others').hide();
+                $('#enterprise').show();
+                $('#storage-div').hide();
+
+            }
+            
+            else if ($('#id_category').val()=='others'){
+                $('#others').show();
+                $('#value-addition-id').hide();
+                $('#enterprise').hide();
+                $('#storage-div').hide();
+                $('#size').hide();
+                $('#transport').hide();
+            }
+            else if ($('#id_category').val()=='transport'){
+                $('#size').hide();
+                $('#id_size').hide();
+                $('#transport').show();
+                $('#storage-div').hide();
+                $('#others').hide();
+                $('#enterprise').hide();
+
+            }
+            else {
+                $("#id_available_services").hide();
+                $('#storage-div').hide();
+                $('#value-addition-id').hide();
+                $('#transport').hide();
+                $('#others').hide();
+                $('#enterprise').hide();
+
+
+            }
+        });
+//js for select
+
+
+</script>
+{% endblock %}

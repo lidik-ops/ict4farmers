@@ -1,0 +1,13 @@
+{% extends 'root_email.html' %}
+{% block heading %}
+Dear {{ resource.resource.owner.user }},
+{% endblock heading %}
+{% block content_body %}
+<p>{{ resource.booker }} has booked your resource and awaiting your approval</p>
+<br>
+
+If you think, it's not you, then just ignore this email.
+<br>
+Kind Regards,<br>
+ICT4Farmers Team
+{% endblock content_body %}

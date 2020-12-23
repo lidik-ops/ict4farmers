@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+   <!-- Container-fluid starts-->
+   <div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Calls
+                      
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Call Center</li>
+                    <li class="breadcrumb-item active">Calls</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- bootstrap table begin here -->
+
+<table
+id="table"
+data-toggle="table"
+data-show-toggle="true"
+data-search="true"
+data-show-refresh="true"
+data-show-fullscreen="true"
+data-show-columns="true"
+data-show-columns-toggle-all="true"
+data-show-export="true"
+data-click-to-select="true"
+data-minimum-count-columns="2"
+data-show-pagination-switch="true"
+data-pagination="true"
+data-id-field="session_id"
+data-toolbar="#toolbar"
+data-side-pagination="server"
+data-server-sort="false"
+data-total-field="count"
+data-data-field="results"
+data-export-types="[‘png’, ‘csv’,‘doc’, ‘excel’, ‘xlsx’, ‘pdf’]"
+data-page-list="[10, 25, 50, 100, all]"
+  data-page-list="[10, 25, 50, 100, all]"
+  data-url="/unffeagents/api/call/"
+  data-response-handler="responseHandler">
+  <thead>
+    <tr>
+      <th data-field="session_id" data-visible="false" data-sortable="true">Session ID</th>
+      <th data-formatter="numberFormatter" data-sortable="true">Caller </th>
+      <th data-field="call_date" data-sortable="true">Call Date</th>
+      <th data-field="call_type" data-visible="false"  data-sortable="true">Call Type</th>
+      <th data-field="active" data-visible="false"  data-sortable="true">Status</th>
+      <th data-field="call_duration"  data-sortable="true">Duration</th>
+      <th data-field="recording_url" data-formatter="audioFormatter" data-sortable="true">Recording</th>  
+      <th data-formatter="operateFormatter"  class="text-center">Action</th>       
+    </tr>
+  </thead>
+</table>
+ <!--bootstrap table ends here-->
+ {% endblock %}
+ {% block javascript %}
+<script>
+  var $table = $('#table');
+  var $remove = $('#remove')
+  var selections = []
+
+  function getIdSelections() {
+    return $.map($table.bootstrapTable('getSelections'), function (row) {
+      return row.id
+    })
+  }
+  function responseHandler(res) {
+    $.each(res.rows, function (i, row) {
+      row.state = $.inArray(row.session_id, selections) !== -1
+    })
+    return res
+  }
+  //handles audio
+    function audioFormatter(value, row) {
+      var url =row.recording_url;
+    return '<audio controls > <source src="'+url+'" type="audio/ogg"><source src="'+url+'" type="audio/mpeg"></audio>'
+  }
+ 
+  //handles number link
+  function numberFormatter(value, row) {
+      var number = row.phone;
+      var redirecturl ="/unffeagents/users?phone="+encodeURIComponent(number);
+    return '<a class="Edit" href="'+redirecturl+'" title="'+row.phone+'">'+row.phone+'</a>'
+  }
+  
+  function operateFormatter(value, row, index) {
+    var url ="/unffeagents/create/enquiry/"+row.session_id;
+    var enquery_url ="/unffeagents/enquiries"
+    var response = row.responses;
+    console.log("responses"+ response);
+    if(row.responses==null){
+    return [
+      
+    {% if request.user.is_superuser or perms.unffeagents.add_callrsponse %}
+    
+      '<a class="Edit" href="'+url+'" title="Add Call Enquiry">',
+      '<i class="fas fa-plus"></i>',
+      '</a>  ',
+        {% endif %}
+      
+    ].join('')
+      }
+      else{
+        return[
+        '<a class="Edit" href="'+enquery_url+'" title="View Call Enquiries">',
+      '<i class="fas fa-eye"></i>',
+      '</a>  '
+      ].join('')
+      }
+  }
+
+  ///used cookies to get crsf token
+  function getCookie(c_name)
+    {
+      if (document.cookie.length > 0)
+        {
+          c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1)
+         {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+         }
+     }
+      return "";
+   }
+   function initTable() {
+
+$table.on('check.bs.table uncheck.bs.table ' +
+  'check-all.bs.table uncheck-all.bs.table',
+function () {
+  $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
+
+
+  // save your data, here just save the current page
+  selections = getIdSelections()
+  // push or splice the selections if you want to save all data selections
+})
+$table.on('all.bs.table', function (e, name, args) {
+  console.log(name, args)
+})
+///multiple delete
+$remove.click(function () {
+  var ids = getIdSelections()
+  $remove.prop('disabled', true)
+
+  swal({
+title: "Are you sure?",
+text: "Once deleted, you will not be able to recover these records!",
+icon: "warning",
+buttons: true,
+dangerMode: true,
+})
+.then((willDelete) => {
+if (willDelete) {
+for(id=0; id<ids.length; id++){
+    console.log(ids[id]);
+
+$.ajax({
+    url: "/unffeagents/api/notice/"+ids[id],
+    data: {},
+    headers:{"X-CSRFToken": getCookie("csrftoken")},
+    type: 'DELETE',
+    contentType: 'application/json',
+    success: function(result) {
+      console.log('deleted successfule');
+    },
+   });
+swal("Your record/s have been deleted successfully!", {
+  icon: "success",
+}).then(() =>{
+        window.location.reload()});
+;}
+} else {
+swal("You have cancelled the deletion of records!");
+}
+});
+
+})
+
+
+
+
+
+
+}
+
+$(function() {
+initTable()
+
+$('#locale').change(initTable)
+})
+
+
+
+
+</script>
+ 
+
+ {% endblock %}

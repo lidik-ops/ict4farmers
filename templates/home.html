@@ -1,0 +1,232 @@
+{% extends 'dashboard_base.html' %}
+{% block content %}
+<!-- <div style="background-color: #08b200;"> -->
+
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="page-header-left">
+                                <h3>Dashboard
+                                    <small>ICT4Farmers</small>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ol class="breadcrumb float-right">
+                                <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                                <li class="breadcrumb-item active">Dashboard</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+              <!-- Container-fluid starts-->
+              <div class="container-fluid">
+
+             <div class="row">
+                <div class="col-xl-6 col-md-6 xl-50">
+                    <div class="card order-graph sales-carousel">
+                        <div class="card-header">
+                            <h6>Community Weather</h6>
+                          
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div id="show_community_weather">
+                  
+                                    </div>
+                                </div>
+                              
+                            </div>
+                         
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-6 xl-50">
+                    <div class="card order-graph sales-carousel">
+                        <div class="card-header">
+                            <h6>Today's Weather</h6>
+                          
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div id="showweather">
+                  
+                                    </div>
+                                </div>
+                              
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+             </div>
+             <div class="row">
+                <div class="col-xl-12 col-md-12 xl-100">
+                    <div class="card order-graph sales-carousel">
+                        <div class="card-header">
+                            <h6>Weather Forecast</h6>
+                            <div class="row">
+                            
+                                <div class="col-12">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <input type="text" name="city-name" class="form-control" id="city-name" placeholder="Type District Name">
+                                            </div>
+                                          
+                                            <input type="submit" name="button" class="btn btn-primary btn-sm" id="getWeather" value="Get 7-Day Weather Forecast">
+                                        
+                                        </div>
+                                       
+                                    </form>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="card-body container">
+                            <h2 id="results" class="results"></h2>
+                            {% verbatim %}
+                          
+                        
+                            <script id="weather-spot" type="text/x-handlebars-template">
+                                <div class="weathersection">
+                                    <h3><b>{{now}}</b></h3>
+                                    <div class="weather-description">
+                                        <div id="weather-info">
+                                            <h4>Weather: {{weatherText}}</h4>
+                                            <h4>Average: {{average}}&deg;</h2>
+                                            <h4>High: {{high}}&deg;</h3>
+                                            <h4>Low: {{low}}&deg;</h3>
+                                            <h4>Morning: {{morning}}&deg;</h3>
+                                            <h4>Night: {{nighttime}}&deg;</h3>
+                                            <img class="cloud-image" src="http://webdesignertroy.com/dump/clouds/cloud-{{cloudInfo}}.jpg" alt="{{cloudInfoText}}" title="{{cloudInfoText}}">
+                                        </div>	
+                                    </div>
+                                </div>
+                            </script>
+        
+
+{% endverbatim %}
+                        </div>
+                    </div>
+                </div>
+              
+             </div>
+             
+             <div class="row">
+
+                <div class="col-xl-6 col-md-6 xl-50">
+                    <div class="card order-graph sales-carousel">
+                        
+                        <div class="card-body">
+                            <div id="piecontainer"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-6 xl-50">
+                    <div class="card">
+                        
+                        <div class="card-body">
+                        
+                            <div id="barscontainer">
+                                <!-- {% include 'credit.html'%} -->
+                            </div>
+                        </div>
+                </div>
+                </div>
+
+             </div>
+
+
+                <div class="row">
+                   <div class="col-xl-12 xl-100">
+                        <div class="card tab2-card">
+                            <div class="card-header">
+                                <h5>Map of Uganda</h5>
+                            </div>
+                                <div class="card-body">
+                                    <ul class="nav nav-tabs tab-coupon" id="myTab" role="tablist">
+                                        <li class="nav-item"><a class="nav-link active show" id="farm_container-tab" data-toggle="tab" href="#farm_container" role="tab" aria-controls="farm_container" aria-selected="true" data-original-title="" title="">Farms</a></li>
+                                        <li class="nav-item"><a class="nav-link show" id="resource_contain-tabs" data-toggle="tab" href="#resource_contain" role="tab" aria-controls="resource_contain" aria-selected="false" data-original-title="" title="">Resources</a></li>
+                                        <li class="nav-item"><a class="nav-link show" id="service_container-tabs" data-toggle="tab" href="#service_container" role="tab" aria-controls="serivice_container" aria-selected="false" data-original-title="" title="">Services</a></li>
+                                        <li>
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane fade active show" id="farm_container" role="tabpanel" aria-labelledby="farm_container-tab">
+                                            <div id="map" style="height:1000px; width: 100% !important;">
+                                            </div>
+                                        </div>
+                                       
+                                        <div style="height:800px;" class="tab-pane fade" id="resource_contain" role="tabpanel" aria-labelledby="resource_contain-tabs">
+                                            <div id="resourcemap"  style="height:800px;"></div>
+                                        </div>
+
+                                        <div style="height:800px;" class="tab-pane fade" id="service_container" role="tabpanel" aria-labelledby="service_container-tabs">
+                                            <div id="home" style="height:800px;"></div>
+                                        </div>
+
+                                    </div>
+                                    
+                                </div>        
+                        </div>
+                    </div>
+                </div>
+
+                {% endblock %}
+            
+            <!-- Container-fluid Ends-->
+        <!-- </div> -->
+     {% block javascript %}
+<script>
+    
+     Highcharts.chart('barscontainer', {
+  chart: {
+      type: 'column'
+  },
+  title: {
+      text: 'Farmers credit Access '
+  },
+  xAxis: {
+      categories: [
+        {% for entry in dataset %}'{{ entry.user__profile__region__name}} Region'{% if not forloop.last %}, {% endif %}{% endfor %}
+      ]
+  },
+  series: [{
+      name: 'BANK',
+      data: [
+        {% for entry in dataset %}{{ entry.bank_count }}{% if not forloop.last %}, {% endif %}{% endfor %}
+      ],
+      color: 'green'
+  }, {
+      name: 'SACCOS',
+      data: [
+        {% for entry in dataset %}{{ entry.sacco_count }}{% if not forloop.last %}, {% endif %}{% endfor %}
+      ],
+      color: 'blue'
+  },
+  {
+      name: 'VSLA',
+      data: [
+        {% for entry in dataset %}{{ entry.vsla_count }}{% if not forloop.last %}, {% endif %}{% endfor %}
+      ],
+      color: 'red'
+  },
+  {
+      name: 'FARMER GROUPS',
+      data: [
+        {% for entry in dataset %}{{ entry.farmergroups_count }}{% if not forloop.last %}, {% endif %}{% endfor %}
+      ],
+      color: 'grey'
+  }]
+});
+  
+</script>
+
+            {% endblock %}

@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+   <!-- Container-fluid starts-->
+   <div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Enquiry List
+                     
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Call Center</li>
+                    <li class="breadcrumb-item active">Equiry List</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- bootstrap table begin here -->
+<div id="toolbar">
+  {% if request.user.is_superuser or perms.unffeagents.delete_callrsponse %}
+  <button id="remove" class="btn btn-danger" disabled>
+    <i class="fa fa-trash"></i> Delete
+  </button>
+  {% endif %}
+</div>
+<table
+   id="table"
+   data-toggle="table"
+  data-show-toggle="true"
+  data-search="true"
+  data-show-search-button="true"
+  data-show-refresh="true"
+  data-show-fullscreen="true"
+  data-show-columns="true"
+  data-show-columns-toggle-all="true"
+  data-show-export="true"
+  data-click-to-select="true"
+  data-minimum-count-columns="2"
+  data-show-pagination-switch="true"
+  data-pagination="true"
+  data-id-field="id"
+  data-total-field="count"
+  data-data-field="results"
+  data-toolbar="#toolbar"
+  data-side-pagination="server"
+  data-server-sort="false"
+  data-page-list="[10, 25, 50, 100, all]"
+  data-export-types="[‘png’, ‘csv’,‘doc’, ‘excel’, ‘xlsx’, ‘pdf’,'json']"
+  data-url="/unffeagents/api/response/"
+  data-response-handler="responseHandler">
+  <thead>
+    <tr>
+      {% if request.user.is_superuser or perms.unffeagents.delete_callrsponse %}
+      <th data-field="state" data-checkbox="true"></th>
+      {% endif %}
+      <th data-field="caller_name" data-sortable="true">Caller's Name</th>
+      <th data-field="caller" data-sortable="true">Phone Number</th>
+      <th data-field="called_from" data-sortable="true">Called From</th>
+      <th data-field="type_of_question" data-sortable="true">Asked Aboout</th>
+      <th data-field="agent"  data-sortable="true">Worked On By</th>
+      <th data-field="question" data-sortable="true">Question Asked</th>
+      <th data-field="solution" data-sortable="true" data-visible="false">Solution Given</th>
+     
+      <th data-formatter="operateFormatter"  class="text-center">Action</th>
+                
+    </tr>
+  </thead>
+</table>
+ <!--bootstrap table ends here-->
+ {% endblock %}
+ {% block javascript %}
+<script>
+  var $table = $('#table');
+  var $remove = $('#remove')
+  var selections = []
+
+  function getIdSelections() {
+    return $.map($table.bootstrapTable('getSelections'), function (row) {
+      return row.id
+    })
+  }
+  function responseHandler(res) {
+    $.each(res.rows, function (i, row) {
+      row.state = $.inArray(row.id, selections) !== -1
+    })
+    return res
+  }
+
+  function operateFormatter(value, row, index) {
+    console.log(row.id);
+    var url ="/unffeagents/"+row.id+"/edit/enquiry";
+   
+    return [
+    {% if request.user.is_superuser or perms.unffeagents.change_callrsponse %}
+      '<a class="Edit " href="'+url+'" title="Edit">',
+      '<i class="fas fa-edit"></i>',
+      '</a>  ',
+        {% endif %}
+      
+    ].join('')
+  }
+
+  ///used cookies to get crsf token
+  function getCookie(c_name)
+    {
+      if (document.cookie.length > 0)
+        {
+          c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1)
+         {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+         }
+     }
+      return "";
+   }
+   function initTable() {
+
+$table.on('check.bs.table uncheck.bs.table ' +
+  'check-all.bs.table uncheck-all.bs.table',
+function () {
+  $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
+
+
+  // save your data, here just save the current page
+  selections = getIdSelections()
+  // push or splice the selections if you want to save all data selections
+})
+$table.on('all.bs.table', function (e, name, args) {
+  console.log(name, args)
+})
+///multiple delete
+$remove.click(function () {
+  var ids = getIdSelections()
+  $remove.prop('disabled', true)
+
+  swal({
+title: "Are you sure?",
+text: "Once deleted, you will not be able to recover these records!",
+icon: "warning",
+buttons: true,
+dangerMode: true,
+})
+.then((willDelete) => {
+if (willDelete) {
+for(id=0; id<ids.length; id++){
+    console.log(ids[id]);
+
+$.ajax({
+    url: "/unffeagents/api/response/"+ids[id],
+    data: {},
+    headers:{"X-CSRFToken": getCookie("csrftoken")},
+    type: 'DELETE',
+    contentType: 'application/json',
+    success: function(result) {
+      console.log('deleted successfule');
+    },
+   });
+swal("Your record/s have been deleted successfully!", {
+  icon: "success",
+}).then(() =>{
+        window.location.reload()});
+;}
+} else {
+swal("You have cancelled the deletion of records!");
+}
+});
+
+})
+
+
+
+
+
+
+}
+
+$(function() {
+initTable()
+
+$('#locale').change(initTable)
+})
+
+
+
+
+</script>
+ 
+
+ {% endblock %}

@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/multi_form.css' %}">
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-header-left">
+                                <h3> Create Service Provider Profile
+                                 
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ol class="breadcrumb float-right">
+                                <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                                <li class="breadcrumb-item">Service Providers </li>
+                                <li class="breadcrumb-item active">Add Profile </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card tab2-card">
+                            <div class="card-header">
+                                <h5> Add Profile</h5>
+                            </div>
+                            <form method="POST"  id="form"  data-districts-url="{% url 'common:ajax_load_districts' %}" novalidate enctype="multipart/form-data" class="card-body"
+                            data-counties-url="{% url 'common:ajax_load_counties' %}"
+                            data-sub_counties-url="{% url 'common:ajax_load_sub_counties' %}"
+                            data-parishes-url="{% url 'common:ajax_load_parishes' %}"
+                            data-villages-url="{% url 'common:ajax_load_villages' %}">
+                                {% csrf_token %}
+ 
+                                <div class="tab-content" id="myTabContent">
+                                  <div class="tab" id="personalinfo" role="tabpanel" aria-labelledby="personalinfo-tab">
+                                      <div class="row">
+                                          <div class="col-xl-6 col-md-6">
+                                              {{ form.nin|as_crispy_field }}
+                                          </div>
+                                          <div class="col-xl-6 col-md-6">
+                                              {{ form.service_provider_location|as_crispy_field }}
+                                          </div>
+                                          <div class="col-xl-12 col-md-12">
+                                              {{ form.category|as_crispy_field }}
+                                          </div>
+                                         
+                                      </div>
+                                  </div>                    
+                                  <div class="tab" id="farming" role="tabpanel" aria-labelledby="farming-tabs">
+                                                                             
+                                      <div class="row">
+                                
+                                          <div class="col-xl-6 col-md-6">
+                                            {{ form.list_of_services_if_more_than_one|as_crispy_field }}
+                                        </div>
+                                          
+                                          <div class="col-xl-6 col-md-6">
+                                              {{ form.service_location|as_crispy_field }}
+                                          </div>
+                                          <div class="col-xl-6 col-md-6">
+                                              {{ form.is_the_service_at_a_fee|as_crispy_field }}
+                                          </div>
+                                          <div class="col-xl-6 col-md-6">
+                                              {{ form.is_the_service_available|as_crispy_field }}
+                                          </div>
+                                      </div>
+                                
+                              </div>
+                              </div>
+                                <div style="overflow:auto;">
+                                    <div style="float:right;">
+                                      <button type="button" class="btn previous">Previous</button>
+                                      <button type="button" class="next btn btn-primary">Next</button>
+                                     
+                                      <button type="button" class="btn btn-success submit">Submit</button>
+                                    </div>
+                                </div>
+                                <!-- Circles which indicates the steps of the form: -->
+                                <div style="text-align:center;margin-top:40px;">
+                                    <span class="step">1</span>
+                                    <span class="step">2</span>
+                                   
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+            {% endblock %}
+           
+
+<!--select 2-->
+<!-- latest jquery-->
+{% block javascript %}
+<!--select 2-->
+<script src="{% static 'js/validate.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/multi_form.js' %}"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+       $("#id_category").select2();
+    //load districts
+    $("#id_region").change(function () {
+      var url = $("#form").attr("data-districts-url");  // get the url of the `load_cities` view
+      var regionId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+        data: {
+          'region': regionId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_district").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+    //load counties
+    $("#id_district").change(function () {
+      var url = $("#form").attr("data-counties-url");  // get the url of the `load_cities` view
+      var districtId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request 
+        data: {
+          'district': districtId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_county").html(data);  // replace the contents of the city input with the data that came from the server
+        
+        }
+      });
+    });
+    // load sub counties
+    $("#id_county").change(function () {
+      var url = $("#form").attr("data-sub_counties-url");  // get the url of the `load_cities` view
+      var countyId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request 
+        data: {
+          'county': countyId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_sub_county").html(data);  // replace the contents of the city input with the data that came from the server
+    
+        }
+      });
+    });
+
+    // load parishes ajax
+    $("#id_sub_county").change(function () {
+      var url = $("#form").attr("data-parishes-url");  // get the url of the `load_cities` view
+      var sub_countyId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request 
+        data: {
+          'sub_county': sub_countyId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_parish").html(data);  // replace the contents of the city input with the data that came from the server
+        
+        }
+      });
+    });
+
+      // load villages ajax
+      $("#id_parish").change(function () {
+      var url = $("#form").attr("data-villages-url");  // get the url of the `load_cities` view
+      var parishId = $(this).val();  // get the selected  ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request 
+        data: {
+          'parish': parishId       // add the  id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_village").html(data);  // replace the contents of the city input with the data that came from the server
+        
+        }
+      });
+    });
+
+
+    //form stepwise validation
+      ///form validation 
+    // example of adding a custom  validation method to the form
+    // $.validator.addMethod('year', function (value, element, param) {
+    //             return (value != 0) && (value >= 1900) && (value == parseInt(value, 10));
+    //         }, 'Please enter a valid year not less than 1900!');
+    //         $.validator.addMethod('username', function (value, element, param) {
+    //             var nameRegex = /^[a-zA-Z0-9]+$/;
+    //             return value.match(nameRegex);
+    //         }, 'Only a-z, A-Z, 0-9 characters are allowed');
+
+
+    var val = {
+                // Specify validation rules
+                rules: {
+                  phone_1_1: {
+                        required: true,
+                        minlength:9,
+                        digits: true
+                    },
+                    phone_2_1: {
+                      required: true,
+                        minlength:9,
+                        digits: true
+
+                    },
+                    nin: {
+                        required: true,
+                        minlength:14,
+                    }
+                },
+                // Specify validation error messages
+                messages: {
+                  phone_1_1:
+                        "Please enter a valid phone number",
+                   phone_2_1: {
+                        required: "Please enter a valid phone numbe"
+                    },
+                    nin: {
+                        required: "Please a valid NIN"
+                    }
+                }
+            }
+    // calling multistep 
+    $("#form").multiStepForm(
+                {
+                    // defaultStep:0,
+                    beforeSubmit: function (form, submit) {
+                        console.log("called before submiting the form");
+                        console.log(form);
+                        console.log(submit);
+                    },
+                    validations: val,
+                }
+            ).navigateTo(0);
+
+
+
+    });
+  
+  
+  </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+

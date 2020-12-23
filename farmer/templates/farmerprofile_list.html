@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+   <!-- Container-fluid starts-->
+   <div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Farmer profile List <br>
+                      {% if request.user.is_superuser or perms.farmer.add_farmerprofile %}
+                      <small><a class="add-new" href="{% url 'farmer:create_farmer' %}">
+                        {% if request.user.is_superuser %}
+                        Add new
+                        {% else %}
+                        Register
+                        {% endif %}
+                      </a></small>
+                      {% endif %}
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Farmer profile</li>
+                    <li class="breadcrumb-item active">Farmer profile List</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Container-fluid Ends-->
+
+
+
+<!-- bootstrap table begin here -->
+<div id="toolbar">
+  {% if request.user.is_superuser or perms.farmer.delete_farmerprofile %}
+  <button id="remove" class="btn btn-danger" title="Delete" disabled>
+    <i class="fa fa-trash"></i>
+  </button>
+
+  {% endif %}
+  {% if request.user.is_superuser or perms.farmer.can_approve_farmers %}
+  <button id="decline" class="btn btn-decline" title="Decline" disabled>
+    <i class="fa fa-times"></i>
+  </button>
+  <button id="approve" class="btn btn-primary" title="Approve" disabled>
+    <i class="fa fa-check"></i>
+  </button>
+  {% endif %}
+</div>
+<table
+  id="table"
+  data-toggle="table"
+  data-show-toggle="true"
+  data-search="true"
+  data-show-search-button="true"
+  data-show-refresh="true"
+  data-show-fullscreen="true"
+  data-show-columns="true"
+  data-show-columns-toggle-all="true"
+  data-show-export="true"
+  data-click-to-select="true"
+  data-minimum-count-columns="2"
+  data-show-pagination-switch="true"
+  data-pagination="true"
+  data-id-field="user_id"
+  data-total-field="count"
+  data-data-field="results"
+  data-toolbar="#toolbar"
+  data-side-pagination="server"
+  data-server-sort="false"
+  data-page-list="[10, 25, 50, 100, all]"
+  data-export-types="[‘png’, ‘csv’,‘doc’, ‘excel’, ‘xlsx’, ‘pdf’]"
+  data-page-list="[10, 25, 50, 100, all]"
+  data-url="/farmer/api/farmerprofiles/?format=json"
+  data-response-handler="responseHandler">
+  <thead>
+    <tr>
+      {% if request.user.is_superuser or perms.farmer.delete_farmerprofile %}
+      <th data-field="state" data-checkbox="true"></th>
+      {% endif %}
+      <th data-field="full_name" data-sortable="true">Name</th>
+      <th data-field="date_of_birth" data-visible="false"  data-sortable="true">DOB</th>
+      <th data-field="nin" data-visible="false"  data-sortable="true">NIN</th>
+      <th data-field="sector" data-sortable="true">Sector</th>
+      <th data-field="region" data-sortable="true">Region</th>
+      <th data-field="district" data-sortable="true">District</th>
+      <th data-field="county" data-visible="false" data-sortable="true">County</th>
+      <th data-field="sub_county" data-visible="false" data-sortable="true">Sub County</th>
+      <th data-field="parish" data-visible="false" data-sortable="true">Parish</th>
+      <th data-field="village" data-visible="false" data-sortable="true">Village</th>
+      <th data-field="level_of_education" data-visible="false"  data-sortable="true">Education Level</th>
+      <th data-field="marital_status" data-visible="false" data-sortable="true">Marital Status</th>
+      <th data-field="size_of_land" data-visible="false"  data-sortable="true">Size of Land</th>
+      <th data-field="phone_1" data-sortable="true">Phone</th>
+      <th data-field="phone_2" data-visible="false" data-sortable="true">Phone 2</th>
+      <th data-field="group" data-sortable="true">Group</th>
+      <th data-field="type_of_land" data-visible="false" data-sortable="true">Land Type</th>
+      <th data-field="production_scale" data-visible="false"  data-sortable="true">Production Scale</th>
+      <th data-field="number_of_dependants" data-visible="false" data-sortable="true">Number of Dependants</th>
+      <th data-field="credit_access" data-visible="false" data-sortable="true">Access to Credit</th>
+      <th data-field="source_of_credit" data-visible="false" data-sortable="true">Source of Credit</th>
+      <th data-field="experience" data-visible="false"  data-sortable="true">experience</th>
+      <th data-field="status" data-sortable="true">status</th>
+      <th data-formatter="operateFormatter"  class="text-center">Action</th>
+      
+    </tr>
+  </thead>
+</table>
+ <!--bootstrap table ends here-->
+
+ {% endblock %}
+
+<!-- latest jquery-->
+{% block javascript %}
+<script>
+  var $table = $('#table')
+  var $remove = $('#remove')
+  var $approve = $('#approve')
+  var $decline = $('#decline')
+  var selections = []
+
+  function getIdSelections() {
+    return $.map($table.bootstrapTable('getSelections'), function (row) {
+      return row.user_id
+    })
+  }
+
+  function responseHandler(res) {
+    $.each(res.rows, function (i, row) {
+      row.state = $.inArray(row.user_id, selections) !== -1
+    })
+    return res
+  }
+
+
+
+  function operateFormatter(value, row, index) {
+    var url ="/farmer/"+row.user_id+"/edit"
+    var view_url ="/farmer/"+row.user_id+"/view"
+    return [
+    {% if request.user.is_superuser or perms.farmer.change_farmerprofile %}
+      '<a class="Edit " href="'+url+'" title="Update">',
+      '<i class="fa fa-edit"></i>',
+      '</a>  ',
+        {% endif %}
+        {% if request.user.is_superuser or perms.farmer.view_farmerprofile %}
+        '<a class="Edit " href="'+view_url+'" title="De"tails>',
+      '<i class="fa fa-eye"></i>',
+      '</a>  ',
+      {% endif %}
+    ].join('')
+  }
+
+
+  ///used cookies to get crsf token
+  function getCookie(c_name)
+    {
+      if (document.cookie.length > 0)
+        {
+          c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1)
+         {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start,c_end));
+         }
+     }
+      return "";
+   }
+
+  function initTable() {
+
+    $table.on('check.bs.table uncheck.bs.table ' +
+      'check-all.bs.table uncheck-all.bs.table',
+    function () {
+      $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
+      $approve.prop('disabled', !$table.bootstrapTable('getSelections').length)
+      $decline.prop('disabled', !$table.bootstrapTable('getSelections').length)
+
+      // save your data, here just save the current page
+      selections = getIdSelections()
+      // push or splice the selections if you want to save all data selections
+    })
+    $table.on('all.bs.table', function (e, name, args) {
+      console.log(name, args)
+    })
+    ///multiple delete
+    $remove.click(function () {
+      var ids = getIdSelections()
+      $remove.prop('disabled', true)
+
+      swal({
+  title: "Are you sure?",
+  text: "Once deleted, you will not be able to recover these records!",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    for(id=0; id<ids.length; id++){
+        console.log(ids[id]);
+
+    $.ajax({
+        url: "/farmer/api/farmerprofiles/"+ids[id],
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'DELETE',
+        contentType: 'application/json',
+        success: function(result) {
+          console.log('deleted successfule');
+        },
+       });
+    swal("Your record/s have been deleted successfully!", {
+      icon: "success",
+    }).then(() =>{
+        window.location.reload()});
+    }
+  } else {
+    swal("You have cancelled the deletion of records!");
+  }
+});
+
+    })
+
+    ///approve farmer profiles
+    $approve.click(function () {
+      var ids = getIdSelections()
+      $approve.prop('disabled', true)
+
+      swal({
+  title: "Approve Farmer Applications?",
+  text: "Are you sure you want to approve these applications!",
+  icon: "success",
+  buttons: true,
+  dangerMode: false,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    for(id=0; id<ids.length; id++){
+        console.log(ids[id]);
+
+    $.ajax({
+        url: "/farmer/"+ids[id]+'/approve/',
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'PATCH',
+        //contentType: 'application/json',
+        success: function(result) {
+          console.log('approved successfully');
+        },
+       });
+    swal("You have approve farmer/s successfully!", {
+      icon: "success",
+    }).then(() =>{
+        window.location.reload()});
+    }
+  } else {
+    swal("You have cancelled farmer approvals!");
+  }
+});
+
+    })
+
+
+    ///decline farmer request
+    $decline.click(function () {
+      var ids = getIdSelections()
+      $decline.prop('disabled', true)
+
+      swal({
+  title: "Decline Application",
+  text: "Are you sure You want to decline these Applications?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: false,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    for(id=0; id<ids.length; id++){
+        console.log(ids[id]);
+
+    $.ajax({
+        url: "/farmer/"+ids[id]+'/approve/',
+        data: {},
+        headers:{"X-CSRFToken": getCookie("csrftoken")},
+        type: 'PUT',
+        //contentType: 'application/json',
+        success: function(result) {
+          console.log('approved successfully');
+        },
+       });
+    swal("You have approved farmer/s successfully!", {
+      icon: "success",
+    }).then(() =>{
+        window.location.reload()});
+    }
+  } else {
+    swal("You have cancelled farmer approvals!");
+  }
+});
+
+    })
+
+  }
+
+  $(function() {
+    initTable()
+
+    $('#locale').change(initTable)
+  })
+
+
+</script>
+{% endblock %}

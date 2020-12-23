@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="page-header-left">
+                    <h3>Service Details
+
+                    </h3>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <ol class="breadcrumb float-right">
+                    <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Services</li>
+                    <li class="breadcrumb-item active">Service Details</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+ 
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="row product-page-main card-body">
+            <div class="col-md-3">
+
+                <div class="col-auto">
+                    <div class="avatar-wrapper" data-tippy-placement="bottom" title="Service image">
+                        {% if providerrecord.picture %}
+                        <img alt="" class="profile-pic" src="{{providerrecord.picture.url}}" />
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-9">
+                <div class="product-page-details product-right mb-0">
+                    <h2>{{providerrecord.service_name}}</h2>
+                    <hr>
+                    <h3 class="product-title">Service Details</h3>
+
+                    <b>Full Name</b>: {{providerrecord.user.profile}} <br>
+                    <b>Email</b>: {{providerrecord.user.email}} <br>
+                    <b>Phone</b>:
+                    {{providerrecord.phone_1}}{% if providerrecord.phone_2 %}/{{providerrecord.phone_2}}{% endif %} <br>
+                    <b>Service Name</b>: {{providerrecord.service_name}} <br>
+                    <b>Service Location</b>: {{providerrecord.compute_location}}<br>
+
+                    <b>Category</b>: {{providerrecord.category}} <br>
+                    <b>Availability Date</b>: {{providerrecord.availability_date}} <br>
+                    <h3 class="product-title">Address</h3>
+                    
+                    <hr>
+                    <h6 class="product-title size-text">Other Services Offered by {{providerrecord.user.profile}} </h6>
+                    <table data-toggle="table" data-show-toggle="true" data-search="true"
+                        data-show-columns-toggle-all="true" data-show-columns="true">
+                        <thead>
+
+                            <tr>
+                                <!--<th>Farm Name</th>-->
+                                <th>Service Name</th>
+                                <th>Category</th>
+                                <th>Service Type</th>
+                                <th>Size</th>
+                                <th data-visible="false">Availability Date</th>
+                                <th data-visible="false">Picture</thdata-visible="false"
+                                        data-formatter="imageFormatter">
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for service in providerrecord.serviceregistration.all %}
+                            <tr>
+                                <!--<td>{{service.farm_name}}</td>-->
+                                <td>{{providerrecord.service_name}}</td>
+                                <td>{{providerrecord.category}} </td>
+                                <td>{{providerrecord.service_type}}</td>
+                                <td>{{providerrecord.size}}</td>
+
+                                <td>{{providerrecord.availability_date}}</td>
+                                <td>
+                                    <img src="{{service.picture.url}}" class="img-thumbnail">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+
+
+                    <hr>
+
+                    <div class="m-t-15">
+                        <button class="btn btn-primary m-r-10" id="approve_btn" type="button">Approve</button>
+                        <button class="btn btn-decline" id="decline_btn" type="button">Decline</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+{% endblock %}
+{% block javascript %}
+<script>
+
+    var $approve = $('#approve_btn')
+    var $decline = $('#decline_btn')
+
+
+
+    ///used cookies to get crsf token
+    function getCookie(c_name) {
+        if (document.cookie.length > 0) {
+            c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1) {
+                c_start = c_start + c_name.length + 1;
+                c_end = document.cookie.indexOf(";", c_start);
+                if (c_end == -1) c_end = document.cookie.length;
+                return unescape(document.cookie.substring(c_start, c_end));
+            }
+        }
+        return "";
+    }
+
+    function initTable() {
+
+        ///approve farmer profiles
+        $approve.click(function () {
+
+            $approve.prop('disabled', true)
+
+            swal({
+                title: "Approve Service Provider Applications?",
+                text: "Are you sure you want to approve these applications!",
+                icon: "success",
+                buttons: true,
+                dangerMode: false,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+
+                        $.ajax({
+                            url: "/openmarket/" + {{ profilerecord.user.id }} +'/approve/',
+                                data: { },
+                    headers: { "X-CSRFToken": getCookie("csrftoken") },
+                    type: 'PATCH',
+                        //contentType: 'application/json',
+                        success: function(result) {
+                            console.log('approved successfully');
+                        },
+                });
+            swal("You have approve service provider/s successfully!", {
+                icon: "success",
+            });
+        } else {
+            swal("You have cancelled service provider approvals!");
+        }
+});
+
+    })
+
+
+    ///decline farmer request
+    $decline.click(function () {
+
+        $decline.prop('disabled', true)
+
+        swal({
+            title: "Decline Application",
+            text: "Are you sure You want to decline these Applications?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: false,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+
+                    $.ajax({
+                        url: "/openmarket/" + {{ profilerecord.user.id }} +'/approve/',
+                            data: { },
+                headers: { "X-CSRFToken": getCookie("csrftoken") },
+                type: 'PUT',
+                    //contentType: 'application/json',
+                    success: function(result) {
+                        console.log(' Service Provider /s approved successfully');
+                    },
+            });
+        swal("You have approved Service Provider/s successfully!", {
+            icon: "success",
+        });
+    } else {
+        swal("You have cancelled Service Provider approvals!");
+    }
+});
+
+    })
+
+  }
+
+    $(function () {
+        initTable()
+
+    })
+
+
+</script>
+{% endblock %}

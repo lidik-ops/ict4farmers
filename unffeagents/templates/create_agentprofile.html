@@ -1,0 +1,113 @@
+
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="page-header-left">
+                                <h3>Create Agent Profile
+                                    <small>{{ user.groups.all.0 }} </small>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <ol class="breadcrumb pull-right">
+                                <li class="breadcrumb-item"><a href="{% url 'common:home' %}"><i data-feather="home"></i></a></li>
+                                <li class="breadcrumb-item">UnffeAgents </li>
+                                <li class="breadcrumb-item active">Add Agent </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Container-fluid Ends-->
+
+            <!-- Container-fluid starts-->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card tab2-card">
+                            <div class="card-header">
+                                <h5> Add Profile</h5>
+                            </div>
+                            <form class="card-body" id="form" data-districts-url="{% url 'common:ajax_load_districts' %}"  action="" method="post">
+                             {% csrf_token %}
+
+                                <ul class="nav nav-tabs tab-coupon" id="myTab" role="tablist">
+                                    <li class="nav-item"><a class="nav-link active show" id="personalinfo-tab" data-toggle="tab" href="#personalinfo" role="tab" aria-controls="personalinfo" aria-selected="true" data-original-title="" title="">Personal Information</a></li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade active show" id="personalinfo" role="tabpanel" aria-labelledby="personalinfo-tab">
+                                        <div class="row">
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.user|as_crispy_field }}
+                                            </div>
+                                            <div class="col-xl-6 col-md-6">
+                                                {{ form.contact|as_crispy_field }}
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                {{ form.region|as_crispy_field }}
+                                            </div>
+                                            <div class="col-md-4">
+                                                {{ form.district|as_crispy_field }}
+                                            </div>
+                                            <div class="col-md-4">
+                                                {{ form.specific_role|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                                <div class="float-right">
+                                   <input type='submit' class="btn btn-primary" value='save'/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <!-- Container-fluid Ends-->
+            {% endblock %}
+           <!-- latest jquery-->
+{% block javascript %}
+<!-- included them for stepwise forms  -->
+
+<script>
+
+   $(document).ready(function () {
+     // add select 2 to dropdown fields
+     $('#id_user').select2( );
+       //load districts
+    $("#id_region").change(function () {
+      var url = $("#form").attr("data-districts-url");  // get the url of the `load_cities` view
+      var regionId = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+        data: {
+          'region': regionId       // add the country id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_cities` view function
+          $("#id_district").html(data);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+   });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
